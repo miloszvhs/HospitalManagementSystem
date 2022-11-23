@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HospitalManagementSystem.Sh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HospitalManagementSystem.Shared.Abstractions", "HospitalManagementSystem.Shared.Abstractions\HospitalManagementSystem.Shared.Abstractions.csproj", "{2C31505C-AD53-45DD-935A-39A7630F1896}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HospitalManagementSystem.Infrastructure", "HospitalManagementSystem.Infrastructure\HospitalManagementSystem.Infrastructure.csproj", "{1F545B5B-F529-4D9F-920C-29175466CBAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{2C31505C-AD53-45DD-935A-39A7630F1896}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C31505C-AD53-45DD-935A-39A7630F1896}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C31505C-AD53-45DD-935A-39A7630F1896}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F545B5B-F529-4D9F-920C-29175466CBAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F545B5B-F529-4D9F-920C-29175466CBAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F545B5B-F529-4D9F-920C-29175466CBAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F545B5B-F529-4D9F-920C-29175466CBAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{87E701A0-F3EE-4889-BFDB-9AA4FAB88345} = {773DEAC3-EDA9-44F2-851F-9D9E6D553015}

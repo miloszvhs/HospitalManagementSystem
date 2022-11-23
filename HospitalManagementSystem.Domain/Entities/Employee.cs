@@ -4,22 +4,15 @@ namespace HospitalManagementSystem.Domain.Entities;
 
 public class Employee
 {
-    public HospitalManagementSystemId PersonalId { get; }
+    
     public HospitalManagementSystemName Name { get; }
-    public HospitalManagementSystemLastname Lastname { get; }
-    public HospitalManagementSystemUsername Username { get; }
-    public HospitalManagementSystemPassword Password { get; }
+    public HospitalManagementSystemName Lastname { get; }
 
-    public Employee(HospitalManagementSystemId personalId,
-        HospitalManagementSystemName name,
-        HospitalManagementSystemLastname lastname,
-        HospitalManagementSystemUsername username,
-        HospitalManagementSystemPassword password)
+
+    public Employee(HospitalManagementSystemName name,
+        HospitalManagementSystemName lastname)
     {
-        PersonalId = personalId;
         Name = name;
         Lastname = lastname;
-        Username = username;
-        Password = password;
     }
 }

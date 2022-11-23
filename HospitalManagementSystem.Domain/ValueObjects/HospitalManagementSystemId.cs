@@ -1,4 +1,6 @@
-﻿namespace HospitalManagementSystem.Domain.ValueObjects;
+﻿using HospitalManagementSystem.Domain.Exceptions;
+
+namespace HospitalManagementSystem.Domain.ValueObjects;
 
 public record HospitalManagementSystemId
 {
@@ -6,6 +8,11 @@ public record HospitalManagementSystemId
 
     public HospitalManagementSystemId(Guid value)
     {
+        if(value == Guid.Empty)
+        {
+            throw new EmptyHospitalManagementSystemIdException();
+        }
+        
         Value = value;
     }
 
