@@ -1,18 +1,15 @@
 ﻿using HospitalManagementSystem.Domain.ValueObjects;
 
-namespace HospitalManagementSystem.Domain.Entities;
+namespace HospitalManagementSystem.Domain.Abstractions;
 
 public class User
 {
-    public HospitalManagementSystemId Id { get; }
     public HospitalManagementSystemUsername Username { get; }
     public HospitalManagementSystemPassword Password { get; }
 
-    public User(HospitalManagementSystemId id,
-        HospitalManagementSystemUsername username,
+    public User(HospitalManagementSystemUsername username,
         HospitalManagementSystemPassword password)
     {
-        Id = id;
         Username = username;
         Password = password;
     }

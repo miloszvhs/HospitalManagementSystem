@@ -1,18 +1,21 @@
-﻿using HospitalManagementSystem.Domain.ValueObjects;
+﻿using HospitalManagementSystem.Domain.Abstractions;
+using HospitalManagementSystem.Domain.ValueObjects;
 
 namespace HospitalManagementSystem.Domain.Entities;
 
-public class Employee
+public class Employee : User
 {
-    
+    public HospitalManagementSystemId Id { get; }
     public HospitalManagementSystemName Name { get; }
-    public HospitalManagementSystemName Lastname { get; }
-
-
-    public Employee(HospitalManagementSystemName name,
-        HospitalManagementSystemName lastname)
+    public HospitalManagementSystemName LastName { get; }
+    
+    public Employee(HospitalManagementSystemUsername username, HospitalManagementSystemPassword password,
+        HospitalManagementSystemId id,
+        HospitalManagementSystemName name,
+        HospitalManagementSystemName lastName) : base(username, password)
     {
         Name = name;
-        Lastname = lastname;
+        Id = id;
+        LastName = lastName;
     }
 }
