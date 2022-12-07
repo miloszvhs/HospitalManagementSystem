@@ -4,11 +4,11 @@ namespace HospitalManagementSystem.Domain.ValueObjects;
 
 public record HospitalManagementSystemId
 {
-    public Guid Value { get; }
+    public int Value { get; }
 
-    public HospitalManagementSystemId(Guid value)
+    public HospitalManagementSystemId(int value)
     {
-        if(value == Guid.Empty)
+        if(value < 0)
         {
             throw new EmptyHospitalManagementSystemIdException();
         }
@@ -16,9 +16,9 @@ public record HospitalManagementSystemId
         Value = value;
     }
 
-    public static implicit operator Guid(HospitalManagementSystemId id)
+    public static implicit operator int(HospitalManagementSystemId id)
         => id.Value;
 
-    public static implicit operator HospitalManagementSystemId(Guid id)
+    public static implicit operator HospitalManagementSystemId(int id)
         => new(id);
 }

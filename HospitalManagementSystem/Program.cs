@@ -1,9 +1,14 @@
 ﻿using System.Collections.Generic;
+using HospitalManagementSystem.Application.Services;
+using HospitalManagementSystem.Infrastructure.Database;
 
 internal class Program
 {
     public static void Main()
     {
-        var loginService = new UsersLoginService();
+        var database = new HospitalManagementSystemDb();
+        var passwordService = new PasswordHasherService();
+        
+        var loginService = new EmployeeLoginService(database, passwordService);
     }
 }

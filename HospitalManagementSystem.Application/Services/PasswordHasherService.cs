@@ -1,23 +1,32 @@
-﻿using HospitalManagementSystem.Domain.Abstractions;
+﻿using System.Security.Cryptography;
+using System.Text;
 using HospitalManagementSystem.Domain.Entities;
+using HospitalManagementSystem.Domain.Exceptions;
 
 namespace HospitalManagementSystem.Application.Services;
 
 public class PasswordHasherService
 {
-    public string HashPassword(User user, string password)
+    public byte[] HashPassword(string password)
     {
-        var hashedPassword = "";
+        var bytePassword = Encoding.ASCII.GetBytes(password);
         
-        return hashedPassword;
+        using (var mySHA256 = SHA256.Create())
+        {
+            var hashedPassword = mySHA256.ComputeHash(bytePassword);
+            return hashedPassword;
+        }
     }
     
-    public bool ValidatePassword(User user, string password)
+    public bool ValidatePassword(Employee employee, string password)
     {
-        var hashedPassword = HashPassword(user, password);
-        
-        if()
-        
+        var hashedPassword = HashPassword(password);
+
+        if (hashedPassword != employee.Password.Value)
+        {
+            throw new InvalidPasswordException();
+        }
+
         return true;
     }
 }
