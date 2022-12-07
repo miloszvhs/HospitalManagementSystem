@@ -1,19 +1,23 @@
 ﻿using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Exceptions;
 using HospitalManagementSystem.Domain.ValueObjects;
+using HospitalManagementSystem.Shared.Abstractions.Exceptions;
 
 namespace HospitalManagementSystem.Infrastructure.Database;
 
 public class HospitalManagementSystemDb
 {
-    public IEnumerable<Employee> Employees => _employees;
+    public List<Employee> Employees;
 
-    private readonly HashSet<Employee> _employees = new();
-
-    public void AddUser(Employee employee) => _employees.Add(employee);
-    public void UpdateUser(Employee employee)
+    public HospitalManagementSystemDb(List<Employee> employees)
     {
-        var entity = _employees.FirstOrDefault(x => x.Id == employee.Id);
+        Employees = employees;
+    }
+
+    public void AddEmployee(Employee employee) => Employees.Add(employee);
+    public void UpdateEmployee(Employee employee)
+    {
+        var entity = Employees.FirstOrDefault(x => x.Id == employee.Id);
 
         if (entity is not null)
         {
@@ -21,17 +25,17 @@ public class HospitalManagementSystemDb
         }
         else
         {
-            throw new CannotFindUserException(employee.Id.ToString());
+            throw new CannotFindUserException(employee.Id);
         }
     }
 
-    public void RemoveUser(Employee employee)
+    public void RemoveEmployee(Employee employee)
     {
-        var entity = _employees.FirstOrDefault(x => x.Username == employee.Username);
+        var entity = Employees.FirstOrDefault(x => x.Username == employee.Username);
 
         if (entity is not null)
         {
-            _employees.Remove(entity);
+            Employees.Remove(entity);
         }
         else
         {
@@ -39,9 +43,21 @@ public class HospitalManagementSystemDb
         }
     }
 
+    public Employee GetEmployee(int id)
+    {
+        var employee = Employees.FirstOrDefault(x => x.Id == id);
+        
+        if(employee is not null)
+        {
+            return employee;
+        }
+
+        return null;
+    }
+
     public void Seed()
     {
-        _employees.Add(new Employee(new HospitalManagementSystemUsername("test"),
+        Employees.Add(new Employee(new HospitalManagementSystemUsername("test"),
             new HospitalManagementSystemPassword(new byte[3] {15, 15, 13}),
             new HospitalManagementSystemId(1567),
             new HospitalManagementSystemName("name"),

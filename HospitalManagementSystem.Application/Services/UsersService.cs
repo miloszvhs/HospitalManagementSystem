@@ -5,16 +5,16 @@ namespace HospitalManagementSystem.Application.Services;
 
 internal sealed class UsersService
 {
-    private readonly HospitalManagementSystemDb _database;
+    private readonly DatabaseService _database;
 
-    public UsersService(HospitalManagementSystemDb database)
+    public UsersService(DatabaseService database)
     {
         _database = database;
     }
 
     public Employee GetEmployee(int id)
     {
-        var employee = _database.Employees.FirstOrDefault(x => x.Id == id);
+        var employee = _database.GetEmployees().FirstOrDefault(x => x.Id == id);
 
         if (employee is not null)
         {

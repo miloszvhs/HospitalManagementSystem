@@ -1,14 +1,15 @@
 ﻿using HospitalManagementSystem.Domain.Entities;
+using HospitalManagementSystem.Domain.ValueObjects;
 using HospitalManagementSystem.Infrastructure.Database;
 
 namespace HospitalManagementSystem.Application.Services;
 
 public class EmployeeRegistrationService
 {
-    private readonly HospitalManagementSystemDb _database;
+    private readonly DatabaseService _database;
     private readonly PasswordHasherService _passwordHasherService;
 
-    public EmployeeRegistrationService(HospitalManagementSystemDb database,
+    public EmployeeRegistrationService(DatabaseService database,
         PasswordHasherService passwordHasherService)
     {
         _database = database;
@@ -17,24 +18,28 @@ public class EmployeeRegistrationService
 
     public Employee Register()
     {
+        Employee employee;
         var name = Console.ReadLine();
         var lastName = Console.ReadLine();
         var username = Console.ReadLine();
-        var password = Console.ReadLine();
+        var password = _passwordHasherService.HashPassword(Console.ReadLine());
 
         try
         {
-            Employee employee = new();
+            employee = new(
+                new HospitalManagementSystemUsername(username),
+                new HospitalManagementSystemPassword(password),
+                new HospitalManagementSystemId(_database.GetLastId() + 1),
+                new HospitalManagementSystemName(name),
+                new HospitalManagementSystemName(lastName));
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            Console.WriteLine($"Cos poszlo nie tak z rejestracją pracownika: \n{e.Message}");
+            return null;
         }
-        
-        HospitalManagementSystemName Name     
-        HospitalManagementSystemName LastName  
-        HospitalManagementSystemUsername Username { get; }
-        HospitalManagementSystemPassword Password { get; }
+
+        Console.WriteLine($"Pomyslnie stworzono pracownika {employee.Username}");
+        return employee;
     }
 }

@@ -1,0 +1,62 @@
+﻿using System.Xml.Serialization;
+using HospitalManagementSystem.Domain.Entities;
+using HospitalManagementSystem.Infrastructure.Database;
+
+namespace HospitalManagementSystem.Application.Services;
+
+public class DatabaseService
+{
+    private readonly HospitalManagementSystemDb _database;
+    private const string PATH = "hospitalManagementSystemDatabase.xml"; 
+
+    public DatabaseService()
+    {
+    }
+
+    public List<Employee> GetEmployees()
+    {
+        return _database.Employees;
+    }
+    
+    public int GetLastId()
+    {
+        if(_database.Employees.Any())
+        {
+            var id = _database.Employees.OrderBy(x => x.Id).LastOrDefault().Id;
+            return id;
+        }
+
+        return 0;
+    }
+    
+    public void RestoreFromXMLFile()
+    {
+        if(File.Exists(PATH))
+        {
+            var xml = File.ReadAllText(PATH);
+
+            StringReader sr = new(xml);
+
+            XmlRootAttribute root = new();
+            root.ElementName = "Employees";
+            root.IsNullable = true;
+
+            XmlSerializer serializer = new(typeof(List<Employee>), root);
+
+            var xmlEmployees = (List<Employee>)serializer.Deserialize(sr);
+
+            _database.Employees = new List<Employee>(xmlEmployees);
+        }
+    }
+    
+    public void SaveToXMLFile()
+    {
+        XmlRootAttribute root = new();
+        root.ElementName = "Employees";
+        root.IsNullable = true;
+        XmlSerializer serializer = new(typeof(List<Employee>), root);
+
+        using StreamWriter sw = new(PATH);
+        serializer.Serialize(sw, _database.Employees);
+    }
+}

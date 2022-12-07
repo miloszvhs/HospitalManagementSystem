@@ -1,10 +1,10 @@
 ﻿using HospitalManagementSystem.Domain.ValueObjects;
+using HospitalManagementSystem.Shared.Abstractions;
 
 namespace HospitalManagementSystem.Domain.Entities;
 
-public class Employee
+public class Employee : BaseEntity
 {
-    public HospitalManagementSystemId Id { get; }
     public HospitalManagementSystemName Name { get; }
     public HospitalManagementSystemName LastName { get; }
     public HospitalManagementSystemUsername Username { get; }

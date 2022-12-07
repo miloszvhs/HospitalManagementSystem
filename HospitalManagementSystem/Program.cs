@@ -6,9 +6,12 @@ internal class Program
 {
     public static void Main()
     {
-        var database = new HospitalManagementSystemDb();
         var passwordService = new PasswordHasherService();
+        var database = new DatabaseService();
         
+        database.RestoreFromXMLFile();
+
+        var registrationService = new EmployeeRegistrationService(database, passwordService);
         var loginService = new EmployeeLoginService(database, passwordService);
     }
 }

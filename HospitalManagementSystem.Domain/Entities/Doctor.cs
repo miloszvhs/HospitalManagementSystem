@@ -4,8 +4,16 @@ namespace HospitalManagementSystem.Domain.Entities;
 
 public class Doctor : Employee
 {
-    
-    public Doctor(HospitalManagementSystemUsername username, HospitalManagementSystemPassword password, HospitalManagementSystemId id, HospitalManagementSystemName name, HospitalManagementSystemName lastName) : base(username, password, id, name, lastName)
+    public HospitalManagementSystemPWZ Pwz { get; }
+
+    public Doctor(HospitalManagementSystemUsername username,
+        HospitalManagementSystemPassword password,
+        HospitalManagementSystemId id,
+        HospitalManagementSystemName name,
+        HospitalManagementSystemName lastName,
+        HospitalManagementSystemPWZ pwz
+        ) : base(username, password, id, name, lastName)
     {
+        Pwz = pwz;
     }
 }

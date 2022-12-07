@@ -6,10 +6,10 @@ namespace HospitalManagementSystem.Application.Services;
 
 public class EmployeeLoginService
 {
-    private readonly HospitalManagementSystemDb _database;
+    private readonly DatabaseService _database;
     private readonly PasswordHasherService _passwordHasherService;
 
-    public EmployeeLoginService(HospitalManagementSystemDb database,
+    public EmployeeLoginService(DatabaseService database,
         PasswordHasherService passwordHasherService)
     {
         _database = database;
@@ -38,10 +38,6 @@ public class EmployeeLoginService
         return null;
     }
 
-    /*private bool CheckIfValidationSucceeded(Employee employee) 
-        => _database.Employees.Any(x => x.Username == employee.Username 
-                                        && x.Password == employee.Password);*/
-    
     private string WriteAndRead(string value)
     {
         Console.Write(value);
