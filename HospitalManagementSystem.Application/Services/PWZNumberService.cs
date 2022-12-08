@@ -18,7 +18,7 @@ public class PWZNumberService
         {
             pwz = GeneratePWZ();
 
-            if (!_database.GetAllUsers().Exists(x => x.Pwz == pwz))
+            if (!_database.Users.Exists(x => x.Pwz == pwz))
             {
                 break;
             }

@@ -28,35 +28,4 @@ public class DatabaseService
 
         return 0;
     }
-    
-    public void RestoreFromXMLFile()
-    {
-        if(File.Exists(PATH))
-        {
-            var xml = File.ReadAllText(PATH);
-
-            StringReader sr = new(xml);
-
-            XmlRootAttribute root = new();
-            root.ElementName = "Employees";
-            root.IsNullable = true;
-
-            XmlSerializer serializer = new(typeof(List<Employee>), root);
-
-            var xmlEmployees = (List<Employee>)serializer.Deserialize(sr);
-
-            _database.Employees = new List<Employee>(xmlEmployees);
-        }
-    }
-    
-    public void SaveToXMLFile()
-    {
-        XmlRootAttribute root = new();
-        root.ElementName = "Employees";
-        root.IsNullable = true;
-        XmlSerializer serializer = new(typeof(List<Employee>), root);
-
-        using StreamWriter sw = new(PATH);
-        serializer.Serialize(sw, _database.Employees);
-    }
 }

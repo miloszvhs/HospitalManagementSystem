@@ -4,7 +4,7 @@ namespace HospitalManagementSystem.Shared.Abstractions;
 
 public abstract class HospitalManagementSystemBaseDb<T> where T : BaseEntity
 {
-    private readonly List<T> Users = new();
+    public List<T> Users { get; set; } = new();
 
     public void AddUser(T user) => Users.Add(user);
     
@@ -43,6 +43,4 @@ public abstract class HospitalManagementSystemBaseDb<T> where T : BaseEntity
 
         return null;
     }
-
-    public List<T> GetAllUsers() => Users;
 }

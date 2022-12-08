@@ -39,7 +39,7 @@ public class HospitalManagementSystemDb
         }
         else
         {
-            throw new CannotFindUserException(employee.Username);
+            throw new CannotFindUserException(employee.Id);
         }
     }
 

@@ -1,6 +1,5 @@
 ﻿using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.ValueObjects;
-using HospitalManagementSystem.Infrastructure.Database;
 
 namespace HospitalManagementSystem.Application.Services;
 
