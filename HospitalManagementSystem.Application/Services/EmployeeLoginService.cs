@@ -6,10 +6,10 @@ namespace HospitalManagementSystem.Application.Services;
 
 public class EmployeeLoginService
 {
-    private readonly DatabaseService _database;
+    private readonly EmployeeDatabaseService _database;
     private readonly PasswordHasherService _passwordHasherService;
 
-    public EmployeeLoginService(DatabaseService database,
+    public EmployeeLoginService(EmployeeDatabaseService database,
         PasswordHasherService passwordHasherService)
     {
         _database = database;
@@ -20,13 +20,13 @@ public class EmployeeLoginService
     {
         var usernameInput = WriteAndRead("Login: ");
         
-        HospitalManagementSystemUsername login = new(usernameInput);
+        HospitalManagementSystemUsername userLogin = new(usernameInput);
 
         var passwordInput = WriteAndRead("Password: ");
 
         HospitalManagementSystemPassword userPassword = new(_passwordHasherService.HashPassword(passwordInput));
         
-        var employee = new Employee(login, userPassword);
+        var employee = new Employee(userLogin, userPassword);
 
         var succeeded = _passwordHasherService.ValidatePassword(employee, passwordInput);
 

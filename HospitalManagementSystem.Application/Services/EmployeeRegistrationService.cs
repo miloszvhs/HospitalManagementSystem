@@ -5,10 +5,10 @@ namespace HospitalManagementSystem.Application.Services;
 
 public class EmployeeRegistrationService
 {
-    private readonly DatabaseService _database;
+    private readonly EmployeeDatabaseService _database;
     private readonly PasswordHasherService _passwordHasherService;
 
-    public EmployeeRegistrationService(DatabaseService database,
+    public EmployeeRegistrationService(EmployeeDatabaseService database,
         PasswordHasherService passwordHasherService)
     {
         _database = database;

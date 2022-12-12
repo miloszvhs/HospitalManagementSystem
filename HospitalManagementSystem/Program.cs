@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HospitalManagementSystem.Application.Services;
 using HospitalManagementSystem.Infrastructure.Database;
 
@@ -7,11 +8,18 @@ internal class Program
     public static void Main()
     {
         var passwordService = new PasswordHasherService();
-        var database = new DatabaseService();
+        var adminDatabase = new AdminDatabaseService();
+        var doctorDatabase = new DoctorDatabaseService();
+        var employeeDatabase = new EmployeeDatabaseService();
         
-        database.RestoreFromXMLFile();
+        adminDatabase.RestoreFromXmlFile();
+        doctorDatabase.RestoreFromXmlFile();
+        employeeDatabase.RestoreFromXmlFile();
 
-        var registrationService = new EmployeeRegistrationService(database, passwordService);
-        var loginService = new EmployeeLoginService(database, passwordService);
+        var registrationService = new EmployeeRegistrationService(employeeDatabase, passwordService);
+        var loginService = new EmployeeLoginService(employeeDatabase, passwordService);
+
+        loginService.Login();
+
     }
 }
