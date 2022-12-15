@@ -1,15 +1,16 @@
 ﻿using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.ValueObjects;
 using HospitalManagementSystem.Infrastructure.Database;
+using HospitalManagementSystem.Shared.Abstractions.Exceptions;
 
 namespace HospitalManagementSystem.Application.Services;
 
-public class EmployeeLoginService
+public class LoginService
 {
     private readonly EmployeeDatabaseService _database;
     private readonly PasswordHasherService _passwordHasherService;
 
-    public EmployeeLoginService(EmployeeDatabaseService database,
+    public LoginService(EmployeeDatabaseService database,
         PasswordHasherService passwordHasherService)
     {
         _database = database;
@@ -18,6 +19,8 @@ public class EmployeeLoginService
     
     public Employee Login()
     {
+        var succeeded = false;
+        
         var usernameInput = WriteAndRead("Login: ");
         
         HospitalManagementSystemUsername userLogin = new(usernameInput);
@@ -25,13 +28,27 @@ public class EmployeeLoginService
         var passwordInput = WriteAndRead("Password: ");
 
         HospitalManagementSystemPassword userPassword = new(_passwordHasherService.HashPassword(passwordInput));
-        
-        var employee = new Employee(userLogin, userPassword);
 
-        var succeeded = _passwordHasherService.ValidatePassword(employee, passwordInput);
+        var employee = _database.Users.FirstOrDefault(x => x.Username == userLogin);
+
+        try
+        {
+            if (employee is null)
+            {
+                throw new CannotFindUserException(userLogin);
+            }
+        
+            succeeded = _passwordHasherService.ValidatePassword(employee, passwordInput);
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Wystąpił problem z logowaniem:\n{e.Message}");
+        }
 
         if(succeeded)
         {
+            Console.WriteLine("Pomyślnie zalogowano!");
             return employee;
         }
 

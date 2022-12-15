@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using HospitalManagementSystem.Application.Services;
+using HospitalManagementSystem.Domain.Entities;
+using HospitalManagementSystem.Domain.ValueObjects;
 using HospitalManagementSystem.Infrastructure.Database;
 
 internal class Program
@@ -16,10 +18,36 @@ internal class Program
         doctorDatabase.RestoreFromXmlFile();
         employeeDatabase.RestoreFromXmlFile();
 
-        var registrationService = new EmployeeRegistrationService(employeeDatabase, passwordService);
-        var loginService = new EmployeeLoginService(employeeDatabase, passwordService);
+        var registrationService = new RegistrationService(employeeDatabase, passwordService);
+        var loginService = new LoginService(employeeDatabase, passwordService);
+        var menuService = new MenuActionService();
 
-        loginService.Login();
+        while (true)
+        {
+            menuService.DrawMenuViewByMenuType("MainMenu");
+            
+            var input = Console.ReadKey();
+            Console.WriteLine();
+            
+            switch (input.KeyChar)
+            {
+                case '1':
+                    if (loginService.Login() != null)
+                    {
+                        Console.WriteLine("Dziala");
+                    }
+                    break;
+                case '2':
+                    registrationService.Register();
+                    break;
+                case '3':
+                    return;
+                default:
+                    break;
+            }
+        }
+         
+        
 
     }
 }

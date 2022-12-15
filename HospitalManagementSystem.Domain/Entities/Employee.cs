@@ -9,7 +9,10 @@ public class Employee : BaseEntity
     public HospitalManagementSystemName LastName { get; }
     public HospitalManagementSystemUsername Username { get; }
     public HospitalManagementSystemPassword Password { get; }
-    
+
+    public Employee()
+    {
+    }
     public Employee(HospitalManagementSystemUsername username, HospitalManagementSystemPassword password)
     {
         Username = username;

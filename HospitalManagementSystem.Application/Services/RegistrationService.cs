@@ -3,12 +3,12 @@ using HospitalManagementSystem.Domain.ValueObjects;
 
 namespace HospitalManagementSystem.Application.Services;
 
-public class EmployeeRegistrationService
+public class RegistrationService
 {
     private readonly EmployeeDatabaseService _database;
     private readonly PasswordHasherService _passwordHasherService;
 
-    public EmployeeRegistrationService(EmployeeDatabaseService database,
+    public RegistrationService(EmployeeDatabaseService database,
         PasswordHasherService passwordHasherService)
     {
         _database = database;
@@ -18,9 +18,13 @@ public class EmployeeRegistrationService
     public Employee Register()
     {
         Employee employee;
+        Console.Write("Imię: ");
         var name = Console.ReadLine();
+        Console.Write("Nazwisko: ");
         var lastName = Console.ReadLine();
+        Console.Write("Nazwa użytkownika: ");
         var username = Console.ReadLine();
+        Console.Write("Hasło: ");
         var password = _passwordHasherService.HashPassword(Console.ReadLine());
 
         try
@@ -38,7 +42,9 @@ public class EmployeeRegistrationService
             return null;
         }
 
-        Console.WriteLine($"Pomyslnie stworzono pracownika {employee.Username}");
+        Console.WriteLine($"Pomyslnie stworzono pracownika {employee.Username.Value}");
+        _database.AddUser(employee);
+        _database.SaveToXmlFile();
         return employee;
     }
 }

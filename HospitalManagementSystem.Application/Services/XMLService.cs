@@ -35,6 +35,10 @@ public class XMLService<T> where T : BaseEntity
 
             _database.Users = new List<T>(xmlUsers);
         }
+        else
+        {
+            Console.WriteLine($"Nie można pobrać danych z pliku.\nBrak pliku {_elementName}.xml");            
+        }
     }
     
     public void SaveToXmlFile()

@@ -44,5 +44,13 @@ public abstract class HospitalManagementSystemBaseDb<T> where T : BaseEntity
         return null;
     }
 
-    public int GetLastId() => Users.OrderBy(x => x.Id).LastOrDefault().Id;
+    public int GetLastId()
+    {
+        if (Users.Any())
+        {
+            return Users.OrderBy(x => x.Id).LastOrDefault().Id;   
+        }
+
+        return 1;
+    }
 }

@@ -5,4 +5,8 @@ public class CannotFindUserException : HospitalManagementSystemException
     public CannotFindUserException(int userId) : base($"Cannot find user with ID: '{userId}'.")
     {
     }
+    
+    public CannotFindUserException(string userLogin) : base($"Cannot find user with username: '{userLogin}'.")
+    {
+    }
 }

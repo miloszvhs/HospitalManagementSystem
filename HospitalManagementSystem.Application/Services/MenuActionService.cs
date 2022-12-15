@@ -7,9 +7,8 @@ public class MenuActionService
     public Employee Employee { get; }
     private List<MenuAction> _menuActions = new();
     
-    public MenuActionService(Employee employee)
+    public MenuActionService()
     {
-        Employee = employee;
         InitializeMenu();
     }
     
@@ -26,6 +25,9 @@ public class MenuActionService
     
     private void InitializeMenu()
     {
+        _menuActions.Add(new MenuAction(1, "Logowanie", "MainMenu"));
+        _menuActions.Add(new MenuAction(2, "Rejestracja", "MainMenu"));
+        
         _menuActions.Add(new MenuAction(1, "Dyżury", "Admin"));
         _menuActions.Add(new MenuAction(2, "Pokaż użytkowników", "Admin"));
         _menuActions.Add(new MenuAction(3, "Remove recipe", "Admin"));
