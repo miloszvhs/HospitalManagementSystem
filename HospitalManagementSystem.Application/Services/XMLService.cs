@@ -1,20 +1,27 @@
 ﻿using System.Xml.Serialization;
+using AutoMapper;
 using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Shared.Abstractions;
 
 namespace HospitalManagementSystem.Application.Services;
 
-public class XMLService<T> where T : BaseEntity
+public class XMLService<T, V> where T : BaseEntity
 {
     private string _path { get; }
     private string _elementName { get; }
     private readonly HospitalManagementSystemBaseDb<T> _database;
+    private readonly MapperConfiguration _mapperConfiguration;
+    private readonly MapperConfiguration _mapperConfigurationDTO;
 
-    public XMLService(HospitalManagementSystemBaseDb<T> database, string path, string elementName)
+    public XMLService(HospitalManagementSystemBaseDb<T> database, string path, string elementName,
+        MapperConfiguration mapperConfiguration,
+        MapperConfiguration mapperConfigurationDTO)
     {
         _path = path;
         _elementName = elementName;
         _database = database;
+        _mapperConfiguration = mapperConfiguration;
+        _mapperConfigurationDTO = mapperConfigurationDTO;
     }
     
     public void RestoreFromXmlFile()
@@ -29,9 +36,12 @@ public class XMLService<T> where T : BaseEntity
             root.ElementName = _elementName;
             root.IsNullable = true;
 
-            XmlSerializer serializer = new(typeof(List<T>), root);
+            XmlSerializer serializer = new(typeof(List<V>), root);
 
-            var xmlUsers = (List<T>)serializer.Deserialize(sr);
+            var xmlUsersDTO = (List<V>)serializer.Deserialize(sr);
+
+            var mapper = new Mapper(_mapperConfiguration);
+            var xmlUsers = mapper.Map<List<T>>(xmlUsersDTO);
 
             _database.Users = new List<T>(xmlUsers);
         }
@@ -43,12 +53,15 @@ public class XMLService<T> where T : BaseEntity
     
     public void SaveToXmlFile()
     {
+        var mapper = new Mapper(_mapperConfigurationDTO);
+        var usersDTO = mapper.Map<List<V>>(_database.Users);
+        
         XmlRootAttribute root = new();
         root.ElementName = _elementName;
         root.IsNullable = true;
-        XmlSerializer serializer = new(typeof(List<T>), root);
+        XmlSerializer serializer = new(typeof(List<V>), root);
 
         using StreamWriter sw = new(_path);
-        serializer.Serialize(sw, _database.Users);
+        serializer.Serialize(sw, usersDTO);
     }
 }

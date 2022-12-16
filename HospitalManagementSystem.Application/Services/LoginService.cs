@@ -38,7 +38,7 @@ public class LoginService
                 throw new CannotFindUserException(userLogin);
             }
         
-            succeeded = _passwordHasherService.ValidatePassword(employee, passwordInput);
+            succeeded = _passwordHasherService.ValidatePassword(employee, userPassword);
 
         }
         catch (Exception e)

@@ -34,7 +34,7 @@ internal class Program
                 case '1':
                     if (loginService.Login() != null)
                     {
-                        Console.WriteLine("Dziala");
+                        //naprawione
                     }
                     break;
                 case '2':

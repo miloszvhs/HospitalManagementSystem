@@ -2,6 +2,7 @@
 using System.Text;
 using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Exceptions;
+using HospitalManagementSystem.Domain.ValueObjects;
 
 namespace HospitalManagementSystem.Application.Services;
 
@@ -18,11 +19,9 @@ public class PasswordHasherService
         }
     }
     
-    public bool ValidatePassword(Employee employee, string password)
+    public bool ValidatePassword(Employee employee, HospitalManagementSystemPassword password)
     {
-        var hashedPassword = HashPassword(password);
-
-        if (hashedPassword != employee.Password.Value)
+        if (!password.Value.SequenceEqual(employee.Password.Value))
         {
             throw new InvalidPasswordException();
         }
