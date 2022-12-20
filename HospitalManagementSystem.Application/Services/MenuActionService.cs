@@ -30,15 +30,26 @@ public class MenuActionService
         
         _menuActions.Add(new MenuAction(1, "Dyżury", "Admin"));
         _menuActions.Add(new MenuAction(2, "Pokaż użytkowników", "Admin"));
-        _menuActions.Add(new MenuAction(3, "Remove recipe", "Admin"));
-        _menuActions.Add(new MenuAction(4, "Edit recipe", "Admin"));
-        _menuActions.Add(new MenuAction(5, "Koniec", "Admin"));
+        _menuActions.Add(new MenuAction(3, "Dodaj użytkownika", "Admin"));
+        _menuActions.Add(new MenuAction(4, "Usuń użytkownika", "Admin"));
+        _menuActions.Add(new MenuAction(5, "Wylogowanie", "Admin"));
 
-        _menuActions.Add(new MenuAction(1, "Add ingredients", "EditMenu"));
-        _menuActions.Add(new MenuAction(2, "Remove and edit all ingredients", "EditMenu"));
-        _menuActions.Add(new MenuAction(3, "Remove ingredient", "EditMenu"));
-        _menuActions.Add(new MenuAction(4, "Edit specified ingredient", "EditMenu"));
-        _menuActions.Add(new MenuAction(5, "Change description", "EditMenu"));
-        _menuActions.Add(new MenuAction(6, "Leave", "EditMenu"));
+        _menuActions.Add(new MenuAction(1, "Dyżury", "Doctor"));
+        _menuActions.Add(new MenuAction(2, "Koniec", "Doctor"));
+        _menuActions.Add(new MenuAction(3, "Koniec", "Doctor"));
+        _menuActions.Add(new MenuAction(4, "Koniec", "Doctor"));
+        _menuActions.Add(new MenuAction(5, "Wylogowanie", "Doctor"));
+        
+        _menuActions.Add(new MenuAction(1, "Dyżury", "Employee"));
+        _menuActions.Add(new MenuAction(2, "Koniec", "Employee"));
+        _menuActions.Add(new MenuAction(3, "Koniec", "Employee"));
+        _menuActions.Add(new MenuAction(4, "Koniec", "Employee"));
+        _menuActions.Add(new MenuAction(5, "Wylogowanie", "Employee"));
+        
+        _menuActions.Add(new MenuAction(1, "Koniec", "Shifts"));
+        _menuActions.Add(new MenuAction(2, "Koniec", "Shifts"));
+        _menuActions.Add(new MenuAction(3, "Koniec", "Shifts"));
+        _menuActions.Add(new MenuAction(4, "Koniec", "Shifts"));
+        _menuActions.Add(new MenuAction(5, "Powrót", "Shifts"));
     }
 }

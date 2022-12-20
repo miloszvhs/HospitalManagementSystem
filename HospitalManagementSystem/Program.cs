@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using HospitalManagementSystem.Application.Operations;
 using HospitalManagementSystem.Application.Services;
 using HospitalManagementSystem.Domain.Entities;
-using HospitalManagementSystem.Domain.ValueObjects;
-using HospitalManagementSystem.Infrastructure.Database;
+using HospitalManagementSystem.Domain.Interfaces;
 
 internal class Program
 {
     public static void Main()
     {
         var passwordService = new PasswordHasherService();
-        var adminDatabase = new AdminDatabaseService();
-        var doctorDatabase = new DoctorDatabaseService();
-        var employeeDatabase = new EmployeeDatabaseService();
+        IDatabaseService<Admin> adminDatabase = new AdminDatabaseService();
+        IDatabaseService<Doctor> doctorDatabase = new DoctorDatabaseService();
+        IDatabaseService<Employee> employeeDatabase = new EmployeeDatabaseService();
         
         adminDatabase.RestoreFromXmlFile();
         doctorDatabase.RestoreFromXmlFile();
-        employeeDatabase.RestoreFromXmlFile();
+        employeeDatabase.RestoreFromXmlFile(); 
 
         var registrationService = new RegistrationService(employeeDatabase, passwordService);
         var loginService = new LoginService(employeeDatabase, passwordService);
@@ -32,9 +32,29 @@ internal class Program
             switch (input.KeyChar)
             {
                 case '1':
-                    if (loginService.Login() != null)
+                    Employee employee;
+                    
+                    if ((employee = loginService.Login()) != null)
                     {
-                        //naprawione
+                        switch (employee.Rola)
+                        {
+                            case Role.Administrator:
+                                menuService.DrawMenuViewByMenuType("Admin");
+                                var adminOperations = new AdminOperations(menuService, adminDatabase, doctorDatabase, employeeDatabase);
+                                adminOperations.Run();
+                                break;
+                            case Role.Lekarz:
+                                menuService.DrawMenuViewByMenuType("Doctor");
+                                var doctorOperations = new DoctorOperations();
+                                break;
+                            case Role.Pracownik:
+                                menuService.DrawMenuViewByMenuType("Employee");
+                                var employeeOperations = new EmployeeOperations();
+                                break;
+                            default:
+                                Console.WriteLine("Niepoprawny typ");
+                                break;
+                        }
                     }
                     break;
                 case '2':
@@ -46,8 +66,5 @@ internal class Program
                     break;
             }
         }
-         
-        
-
     }
 }

@@ -9,10 +9,12 @@ public class Employee : BaseEntity
     public HospitalManagementSystemName LastName { get; }
     public HospitalManagementSystemUsername Username { get; }
     public HospitalManagementSystemPassword Password { get; }
+    public Role Rola { get; init; }
 
     public Employee()
     {
     }
+    
     public Employee(HospitalManagementSystemUsername username, HospitalManagementSystemPassword password)
     {
         Username = username;
@@ -30,7 +32,13 @@ public class Employee : BaseEntity
         Name = name;
         Id = id;
         LastName = lastName;
+        Rola = Role.Pracownik;
     }
+}
 
-    
+public enum Role
+{
+    Pracownik,
+    Lekarz,
+    Administrator
 }

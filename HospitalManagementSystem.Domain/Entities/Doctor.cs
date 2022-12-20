@@ -23,6 +23,7 @@ public class Doctor : Employee
     {
         Pwz = pwz;
         Specjalizacja = specjalizacja;
+        Rola = Role.Lekarz;
     }
 }
 

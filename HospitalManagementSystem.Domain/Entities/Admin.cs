@@ -15,5 +15,6 @@ public class Admin : Employee
         HospitalManagementSystemName name,
         HospitalManagementSystemName lastName) : base(username, password, id, name, lastName)
     {
+        Rola = Role.Administrator;
     }
 }

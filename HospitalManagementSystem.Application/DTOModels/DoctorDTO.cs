@@ -10,6 +10,7 @@ public class DoctorDTO
     public string LastName { get; set; }
     public string Username { get; set; }
     public byte[] Password { get; set; }
+    public int Role { get; set; }
     public string Pwz { get; set; }
     public int Specjalizacja { get; set; }
 }

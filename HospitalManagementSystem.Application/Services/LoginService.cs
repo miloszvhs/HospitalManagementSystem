@@ -1,16 +1,18 @@
 ﻿using HospitalManagementSystem.Domain.Entities;
+using HospitalManagementSystem.Domain.Interfaces;
 using HospitalManagementSystem.Domain.ValueObjects;
 using HospitalManagementSystem.Infrastructure.Database;
+using HospitalManagementSystem.Shared.Abstractions;
 using HospitalManagementSystem.Shared.Abstractions.Exceptions;
 
 namespace HospitalManagementSystem.Application.Services;
 
 public class LoginService
 {
-    private readonly EmployeeDatabaseService _database;
+    private readonly IDatabaseService<Employee> _database;
     private readonly PasswordHasherService _passwordHasherService;
 
-    public LoginService(EmployeeDatabaseService database,
+    public LoginService(IDatabaseService<Employee> database,
         PasswordHasherService passwordHasherService)
     {
         _database = database;

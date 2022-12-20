@@ -1,11 +1,15 @@
-﻿using HospitalManagementSystem.Shared.Abstractions;
+﻿using HospitalManagementSystem.Domain.Entities;
 
 namespace HospitalManagementSystem.Domain.Interfaces;
 
-public interface IDatabaseService<T> where T : BaseEntity
+public interface IDatabaseService<T> where T : class
 {
-    public void AddUser(T user);
-    public void UpdateUser(T user);
-    public void RemoveUser(T user);
-    public T GetUser(int id);
+    List<T> Users { get; set; }
+    void RestoreFromXmlFile();
+    void SaveToXmlFile();
+    void AddUser(T user);
+    void UpdateUser(T user);
+    void RemoveUser(T user);
+    T GetUser(int id);
+    int GetLastId();
 }

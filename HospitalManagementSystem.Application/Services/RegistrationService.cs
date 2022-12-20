@@ -1,14 +1,15 @@
 ﻿using HospitalManagementSystem.Domain.Entities;
+using HospitalManagementSystem.Domain.Interfaces;
 using HospitalManagementSystem.Domain.ValueObjects;
 
 namespace HospitalManagementSystem.Application.Services;
 
 public class RegistrationService
 {
-    private readonly EmployeeDatabaseService _database;
+    private readonly IDatabaseService<Employee> _database;
     private readonly PasswordHasherService _passwordHasherService;
 
-    public RegistrationService(EmployeeDatabaseService database,
+    public RegistrationService(IDatabaseService<Employee> database,
         PasswordHasherService passwordHasherService)
     {
         _database = database;

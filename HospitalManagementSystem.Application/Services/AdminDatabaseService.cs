@@ -12,20 +12,9 @@ public class AdminDatabaseService : HospitalManagementSystemBaseDb<Admin>, IData
 
     public AdminDatabaseService()
     {
-        var mapperConfiguration = new MapperConfiguration(cfg =>
-            cfg.CreateMap<Admin, AdminDTO>()
-                .ForMember(x => x.Name, s => s.MapFrom(d => d.Name.Value))
-                .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
-                .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
-                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
-                .ReverseMap());
-        
-        var mapperConfigurationDTO = new MapperConfiguration(cfg =>
-            cfg.CreateMap<Admin, AdminDTO>()
-                .ForMember(x => x.Name, s => s.MapFrom(d => d.Name.Value))
-                .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
-                .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
-                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value)));
+        var mapperConfiguration = InitializeMapperConfiguration();
+
+        var mapperConfigurationDTO = InitializeMapperConfigurationDTO();
         
         _xmlService = new(this, "admins.xml", "Admins", mapperConfiguration, mapperConfigurationDTO);
     }
@@ -38,5 +27,26 @@ public class AdminDatabaseService : HospitalManagementSystemBaseDb<Admin>, IData
     public void SaveToXmlFile()
     {
         _xmlService.SaveToXmlFile();
+    }
+
+    private MapperConfiguration InitializeMapperConfiguration()
+    {
+        return new MapperConfiguration(cfg =>
+            cfg.CreateMap<Admin, AdminDTO>()
+                .ForMember(x => x.Name, s => s.MapFrom(d => d.Name.Value))
+                .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
+                .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
+                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
+                .ReverseMap());
+    }
+    
+    private MapperConfiguration InitializeMapperConfigurationDTO()
+    {
+        return new MapperConfiguration(cfg =>
+            cfg.CreateMap<Admin, AdminDTO>()
+                .ForMember(x => x.Name, s => s.MapFrom(d => d.Name.Value))
+                .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
+                .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
+                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value)));
     }
 }

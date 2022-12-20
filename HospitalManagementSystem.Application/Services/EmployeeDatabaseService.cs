@@ -12,20 +12,9 @@ public class EmployeeDatabaseService : HospitalManagementSystemBaseDb<Employee>,
 
     public EmployeeDatabaseService()
     {
-        var mapperConfiguration = new MapperConfiguration(cfg =>
-            cfg.CreateMap<Employee, EmployeeDTO>()
-                .ForMember(x => x.Name, s => s.MapFrom(d => d.Name.Value))
-                .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
-                .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
-                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
-                .ReverseMap());
+        var mapperConfiguration = InitializeMapperConfiguration();
 
-        var mapperConfigurationDTO = new MapperConfiguration(cfg =>
-            cfg.CreateMap<Employee, EmployeeDTO>()
-                .ForMember(x => x.Name, s => s.MapFrom(d => d.Name.Value))
-                .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
-                .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
-                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value)));
+        var mapperConfigurationDTO = InitializeMapperConfigurationDTO();
         
         _xmlService = new(this, "employees.xml", "Employees", mapperConfiguration, mapperConfigurationDTO);
     }
@@ -38,5 +27,26 @@ public class EmployeeDatabaseService : HospitalManagementSystemBaseDb<Employee>,
     public void SaveToXmlFile()
     {
         _xmlService.SaveToXmlFile();
+    }
+    
+    private MapperConfiguration InitializeMapperConfiguration()
+    {
+        return new MapperConfiguration(cfg =>
+            cfg.CreateMap<Employee, EmployeeDTO>()
+                .ForMember(x => x.Name, s => s.MapFrom(d => d.Name.Value))
+                .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
+                .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
+                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
+                .ReverseMap());
+    }
+    
+    private MapperConfiguration InitializeMapperConfigurationDTO()
+    {
+        return new MapperConfiguration(cfg =>
+            cfg.CreateMap<Employee, EmployeeDTO>()
+                .ForMember(x => x.Name, s => s.MapFrom(d => d.Name.Value))
+                .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
+                .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
+                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value)));
     }
 }
