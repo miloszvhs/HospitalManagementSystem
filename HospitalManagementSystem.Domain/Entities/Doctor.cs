@@ -29,7 +29,7 @@ public class Doctor : Employee
 
 public enum Specjalizacja
 {
-    Kardiolog,
+    Kardiolog = 1,
     Urolog,
     Laryngolog,
     Neurolog

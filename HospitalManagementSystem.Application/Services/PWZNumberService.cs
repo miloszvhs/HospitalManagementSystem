@@ -1,11 +1,14 @@
-﻿namespace HospitalManagementSystem.Application.Services;
+﻿using HospitalManagementSystem.Domain.Entities;
+using HospitalManagementSystem.Domain.Interfaces;
 
-public class PWZNumberService
+namespace HospitalManagementSystem.Application.Services;
+
+public class PWZNumberService : IPWZNumberService
 {
-    private readonly DoctorDatabaseService _database;
+    private readonly IDatabaseService<Doctor> _database;
     private Random random { get; } = new();
     
-    public PWZNumberService(DoctorDatabaseService database)
+    public PWZNumberService(IDatabaseService<Doctor> database)
     {
         _database = database;
     }

@@ -2,11 +2,12 @@
 using System.Text;
 using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Exceptions;
+using HospitalManagementSystem.Domain.Interfaces;
 using HospitalManagementSystem.Domain.ValueObjects;
 
 namespace HospitalManagementSystem.Application.Services;
 
-public class PasswordHasherService
+public class PasswordHasherService : IPasswordHasherService
 {
     public byte[] HashPassword(string password)
     {

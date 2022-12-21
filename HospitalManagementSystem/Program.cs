@@ -19,8 +19,12 @@ internal class Program
         doctorDatabase.RestoreFromXmlFile();
         employeeDatabase.RestoreFromXmlFile(); 
 
+        var pwzNumberService = new PWZNumberService(doctorDatabase);
         var registrationService = new RegistrationService(employeeDatabase, passwordService);
-        var loginService = new LoginService(employeeDatabase, passwordService);
+        var loginService = new LoginService(employeeDatabase, 
+            doctorDatabase,
+            adminDatabase,
+            passwordService);
         var menuService = new MenuActionService();
 
         while (true)
@@ -40,7 +44,14 @@ internal class Program
                         switch (employee.Rola)
                         {
                             case Role.Administrator:
-                                var adminOperations = new AdminOperations(menuService, adminDatabase, doctorDatabase, employeeDatabase, shiftService);
+                                var adminOperations = new AdminOperations(menuService,
+                                    adminDatabase,
+                                    doctorDatabase, 
+                                    employeeDatabase,
+                                    shiftService,
+                                    passwordService,
+                                    pwzNumberService);
+                                
                                 adminOperations.Run();
                                 break;
                             case Role.Lekarz:
