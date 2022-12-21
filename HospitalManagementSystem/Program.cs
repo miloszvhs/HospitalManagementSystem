@@ -10,6 +10,7 @@ internal class Program
     public static void Main()
     {
         var passwordService = new PasswordHasherService();
+        var shiftService = new ShiftService();
         IDatabaseService<Admin> adminDatabase = new AdminDatabaseService();
         IDatabaseService<Doctor> doctorDatabase = new DoctorDatabaseService();
         IDatabaseService<Employee> employeeDatabase = new EmployeeDatabaseService();
@@ -39,16 +40,13 @@ internal class Program
                         switch (employee.Rola)
                         {
                             case Role.Administrator:
-                                menuService.DrawMenuViewByMenuType("Admin");
-                                var adminOperations = new AdminOperations(menuService, adminDatabase, doctorDatabase, employeeDatabase);
+                                var adminOperations = new AdminOperations(menuService, adminDatabase, doctorDatabase, employeeDatabase, shiftService);
                                 adminOperations.Run();
                                 break;
                             case Role.Lekarz:
-                                menuService.DrawMenuViewByMenuType("Doctor");
                                 var doctorOperations = new DoctorOperations();
                                 break;
                             case Role.Pracownik:
-                                menuService.DrawMenuViewByMenuType("Employee");
                                 var employeeOperations = new EmployeeOperations();
                                 break;
                             default:

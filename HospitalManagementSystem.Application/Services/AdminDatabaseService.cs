@@ -37,6 +37,7 @@ public class AdminDatabaseService : HospitalManagementSystemBaseDb<Admin>, IData
                 .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
                 .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
                 .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
+                .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola))
                 .ReverseMap());
     }
     
@@ -47,6 +48,7 @@ public class AdminDatabaseService : HospitalManagementSystemBaseDb<Admin>, IData
                 .ForMember(x => x.Name, s => s.MapFrom(d => d.Name.Value))
                 .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
                 .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
-                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value)));
+                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
+                .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola)));
     }
 }

@@ -42,7 +42,7 @@ public class PWZNumberService
         
         pwz[0] = controlNumber;
 
-        var pwzAsString = pwz.ToString();
+        var pwzAsString = string.Join("", pwz);
         var result = ((IConvertible)pwzAsString).ToInt32(default);
         
         return result;

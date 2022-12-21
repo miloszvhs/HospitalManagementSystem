@@ -39,6 +39,7 @@ public class DoctorDatabaseService : HospitalManagementSystemBaseDb<Doctor>, IDa
                 .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
                 .ForMember(x => x.Pwz, s => s.MapFrom(d => d.Pwz.Value))
                 .ForMember(x => x.Specjalizacja, s => s.MapFrom(d => d.Specjalizacja))
+                .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola))
                 .ReverseMap());
     }
     
@@ -51,6 +52,7 @@ public class DoctorDatabaseService : HospitalManagementSystemBaseDb<Doctor>, IDa
                 .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
                 .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
                 .ForMember(x => x.Pwz, s => s.MapFrom(d => d.Pwz.Value))
-                .ForMember(x => x.Specjalizacja, s => s.MapFrom(d => d.Specjalizacja)));
+                .ForMember(x => x.Specjalizacja, s => s.MapFrom(d => d.Specjalizacja))
+                .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola)));
     }
 }

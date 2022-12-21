@@ -13,7 +13,7 @@ public record HospitalManagementSystemPWZ
             throw new EmptyHospitalManagementPWZException();
         }
         
-        if(value.Length != 8 || value.Count(Char.IsLetter) > 1 || !Char.IsLetter(value.Last()) || value.First() == 0)
+        if(value.Length != 7 || value.Count(Char.IsLetter) > 0 || value.First() == 0)
         {
             throw new InvalidHospitalManagementPWZException(value);
         }
