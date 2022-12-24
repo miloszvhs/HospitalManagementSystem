@@ -1,9 +1,6 @@
-﻿using AutoMapper;
-using HospitalManagementSystem.Domain.Entities;
+﻿namespace HospitalManagementSystem.Application.DTOModels;
 
-namespace HospitalManagementSystem.Application.DTOModels;
-
-public class DoctorDTO 
+public class DoctorDTO
 {
     public int Id { get; set; }
     public string Name { get; set; }

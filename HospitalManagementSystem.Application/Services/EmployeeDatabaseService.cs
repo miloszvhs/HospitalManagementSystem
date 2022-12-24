@@ -15,20 +15,21 @@ public class EmployeeDatabaseService : HospitalManagementSystemBaseDb<Employee>,
         var mapperConfiguration = InitializeMapperConfiguration();
 
         var mapperConfigurationDTO = InitializeMapperConfigurationDTO();
-        
-        _xmlService = new(this, "employees.xml", "Employees", mapperConfiguration, mapperConfigurationDTO);
+
+        _xmlService = new XMLService<Employee, EmployeeDTO>(this, "employees.xml", "Employees", mapperConfiguration,
+            mapperConfigurationDTO);
     }
-    
+
     public void RestoreFromXmlFile()
     {
         _xmlService.RestoreFromXmlFile();
     }
-    
+
     public void SaveToXmlFile()
     {
         _xmlService.SaveToXmlFile();
     }
-    
+
     private MapperConfiguration InitializeMapperConfiguration()
     {
         return new MapperConfiguration(cfg =>
@@ -40,7 +41,7 @@ public class EmployeeDatabaseService : HospitalManagementSystemBaseDb<Employee>,
                 .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola))
                 .ReverseMap());
     }
-    
+
     private MapperConfiguration InitializeMapperConfigurationDTO()
     {
         return new MapperConfiguration(cfg =>

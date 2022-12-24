@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using HospitalManagementSystem.Application.Operations;
 using HospitalManagementSystem.Application.Services;
 using HospitalManagementSystem.Domain.Entities;
@@ -14,14 +13,14 @@ internal class Program
         IDatabaseService<Admin> adminDatabase = new AdminDatabaseService();
         IDatabaseService<Doctor> doctorDatabase = new DoctorDatabaseService();
         IDatabaseService<Employee> employeeDatabase = new EmployeeDatabaseService();
-        
+
         adminDatabase.RestoreFromXmlFile();
         doctorDatabase.RestoreFromXmlFile();
-        employeeDatabase.RestoreFromXmlFile(); 
+        employeeDatabase.RestoreFromXmlFile();
 
         var pwzNumberService = new PWZNumberService(doctorDatabase);
         var registrationService = new RegistrationService(employeeDatabase, passwordService);
-        var loginService = new LoginService(employeeDatabase, 
+        var loginService = new LoginService(employeeDatabase,
             doctorDatabase,
             adminDatabase,
             passwordService);
@@ -30,28 +29,27 @@ internal class Program
         while (true)
         {
             menuService.DrawMenuViewByMenuType("MainMenu");
-            
+
             var input = Console.ReadKey();
             Console.WriteLine();
-            
+
             switch (input.KeyChar)
             {
                 case '1':
                     Employee employee;
-                    
+
                     if ((employee = loginService.Login()) != null)
-                    {
                         switch (employee.Rola)
                         {
                             case Role.Administrator:
                                 var adminOperations = new AdminOperations(menuService,
                                     adminDatabase,
-                                    doctorDatabase, 
+                                    doctorDatabase,
                                     employeeDatabase,
                                     shiftService,
                                     passwordService,
                                     pwzNumberService);
-                                
+
                                 adminOperations.Run();
                                 break;
                             case Role.Lekarz:
@@ -64,15 +62,13 @@ internal class Program
                                 Console.WriteLine("Niepoprawny typ");
                                 break;
                         }
-                    }
+
                     break;
                 case '2':
                     registrationService.Register();
                     break;
                 case '3':
                     return;
-                default:
-                    break;
             }
         }
     }

@@ -1,22 +1,19 @@
-﻿using System.Collections;
-using System.Diagnostics;
-using HospitalManagementSystem.Application.Services;
+﻿using HospitalManagementSystem.Application.Services;
 using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Interfaces;
 using HospitalManagementSystem.Domain.ValueObjects;
-using Microsoft.VisualBasic;
 
 namespace HospitalManagementSystem.Application.Operations;
 
 public class AdminOperations
 {
-    private readonly MenuActionService _menuActionService;
-    private readonly IShiftService _shiftService;
-    private readonly IPasswordHasherService _passwordHasherService;
-    private readonly IPWZNumberService _pwzNumberService;
     private readonly IDatabaseService<Admin> _adminDatabase;
     private readonly IDatabaseService<Doctor> _doctorDatabase;
     private readonly IDatabaseService<Employee> _employeeDatabase;
+    private readonly MenuActionService _menuActionService;
+    private readonly IPasswordHasherService _passwordHasherService;
+    private readonly IPWZNumberService _pwzNumberService;
+    private readonly IShiftService _shiftService;
 
 
     public AdminOperations(MenuActionService menuActionService,
@@ -24,7 +21,7 @@ public class AdminOperations
         IDatabaseService<Doctor> doctorDatabase,
         IDatabaseService<Employee> employeeDatabase,
         IShiftService shiftService,
-        IPasswordHasherService passwordHasherService, 
+        IPasswordHasherService passwordHasherService,
         IPWZNumberService pwzNumberService)
     {
         _menuActionService = menuActionService;
@@ -44,7 +41,7 @@ public class AdminOperations
 
             var input = Console.ReadKey();
             Console.WriteLine();
-            
+
             switch (input.KeyChar)
             {
                 case '1':
@@ -121,20 +118,20 @@ public class AdminOperations
                         "4" => Specjalizacja.Neurolog,
                         _ => throw new Exception("Wybrano niepoprawną specjalizację")
                     };
-                    
+
                     _doctorDatabase.AddUser(new Doctor(new HospitalManagementSystemUsername(username),
-                        new HospitalManagementSystemPassword(password), 
+                        new HospitalManagementSystemPassword(password),
                         _doctorDatabase.GetLastId() + 1,
-                        new HospitalManagementSystemName(name), 
-                        new HospitalManagementSystemName(lastName), 
-                        new HospitalManagementSystemPWZ(_pwzNumberService.GetNewPWZ().ToString()), 
+                        new HospitalManagementSystemName(name),
+                        new HospitalManagementSystemName(lastName),
+                        new HospitalManagementSystemPWZ(_pwzNumberService.GetNewPWZ().ToString()),
                         userSpecialization));
                     _doctorDatabase.SaveToXmlFile();
                     break;
                 case "2":
-                    _adminDatabase.AddUser(new Admin(new HospitalManagementSystemUsername(username), 
+                    _adminDatabase.AddUser(new Admin(new HospitalManagementSystemUsername(username),
                         new HospitalManagementSystemPassword(password),
-                        _adminDatabase.GetLastId() + 1, 
+                        _adminDatabase.GetLastId() + 1,
                         new HospitalManagementSystemName(name),
                         new HospitalManagementSystemName(lastName)));
                     _adminDatabase.SaveToXmlFile();
@@ -152,26 +149,26 @@ public class AdminOperations
 
     private void ShowUsers()
     {
-        Console.Write($"Numer\tId\tTyp\t\tImie\t\tPWZ\tSpecjalizacja\n");
+        Console.Write("Numer\tId\tTyp\t\tImie\t\tPWZ\tSpecjalizacja\n");
 
-        foreach (var objectsList in new List<IEnumerable<Employee>>() { _adminDatabase.Users, _doctorDatabase.Users, _employeeDatabase.Users})
-        {
-            foreach (var (user, index) in objectsList.Select((x, y) => (x, y + 1)))
+        foreach (var objectsList in new List<IEnumerable<Employee>>
+                     { _adminDatabase.Users, _doctorDatabase.Users, _employeeDatabase.Users })
+        foreach (var (user, index) in objectsList.Select((x, y) => (x, y + 1)))
+            switch (user.GetType().Name)
             {
-                switch (user.GetType().Name)
-                {
-                    case "Admin":
-                        Console.WriteLine($"{index}.\t{user.Id}\t{String.Format("{0, -10}", user.GetType().Name)}\t{user.Name.Value}");
-                        break;
-                    case "Doctor":
-                        var doctorUser = (Doctor)user;
-                        Console.WriteLine($"{index}.\t{user.Id}\t{user.GetType().Name}\t\t{String.Format("{0, -15}", user.Name.Value)}\t{doctorUser.Pwz.Value}\t{doctorUser.Specjalizacja}");
-                        break;
-                    case "Employee":
-                        Console.WriteLine($"{index}.\t{user.Id}\t{user.GetType().Name}\t{user.Name.Value}");
-                        break;
-                }
+                case "Admin":
+                    Console.WriteLine(
+                        $"{index}.\t{user.Id}\t{string.Format("{0, -10}", user.GetType().Name)}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
+                    break;
+                case "Doctor":
+                    var doctorUser = (Doctor)user;
+                    Console.WriteLine(
+                        $"{index}.\t{user.Id}\t{user.GetType().Name}\t\t{string.Format("{0, -15}", user.Name.Value)}\t{doctorUser.Pwz.Value}\t{doctorUser.Specjalizacja}");
+                    break;
+                case "Employee":
+                    Console.WriteLine(
+                        $"{index}.\t{user.Id}\t{user.GetType().Name}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
+                    break;
             }
-        } 
     }
 }

@@ -1,14 +1,11 @@
 ﻿using System.Xml.Serialization;
 using AutoMapper;
-using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Shared.Abstractions;
 
 namespace HospitalManagementSystem.Application.Services;
 
 public class XMLService<T, V> where T : BaseEntity
 {
-    private string _path { get; }
-    private string _elementName { get; }
     private readonly HospitalManagementSystemBaseDb<T> _database;
     private readonly MapperConfiguration _mapperConfiguration;
     private readonly MapperConfiguration _mapperConfigurationDTO;
@@ -23,10 +20,13 @@ public class XMLService<T, V> where T : BaseEntity
         _mapperConfiguration = mapperConfiguration;
         _mapperConfigurationDTO = mapperConfigurationDTO;
     }
-    
+
+    private string _path { get; }
+    private string _elementName { get; }
+
     public void RestoreFromXmlFile()
     {
-        if(File.Exists(_path))
+        if (File.Exists(_path))
         {
             var xml = File.ReadAllText(_path);
 
@@ -47,15 +47,15 @@ public class XMLService<T, V> where T : BaseEntity
         }
         else
         {
-            Console.WriteLine($"Nie można pobrać danych z pliku.\nBrak pliku {_elementName}.xml");            
+            Console.WriteLine($"Nie można pobrać danych z pliku.\nBrak pliku {_elementName}.xml");
         }
     }
-    
+
     public void SaveToXmlFile()
     {
         var mapper = new Mapper(_mapperConfigurationDTO);
         var usersDTO = mapper.Map<List<V>>(_database.Users);
-        
+
         XmlRootAttribute root = new();
         root.ElementName = _elementName;
         root.IsNullable = true;

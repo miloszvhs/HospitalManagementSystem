@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using HospitalManagementSystem.Domain.Entities;
-
-namespace HospitalManagementSystem.Application.DTOModels;
+﻿namespace HospitalManagementSystem.Application.DTOModels;
 
 public class EmployeeDTO
 {

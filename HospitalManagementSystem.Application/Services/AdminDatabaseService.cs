@@ -15,15 +15,16 @@ public class AdminDatabaseService : HospitalManagementSystemBaseDb<Admin>, IData
         var mapperConfiguration = InitializeMapperConfiguration();
 
         var mapperConfigurationDTO = InitializeMapperConfigurationDTO();
-        
-        _xmlService = new(this, "admins.xml", "Admins", mapperConfiguration, mapperConfigurationDTO);
+
+        _xmlService =
+            new XMLService<Admin, AdminDTO>(this, "admins.xml", "Admins", mapperConfiguration, mapperConfigurationDTO);
     }
-    
+
     public void RestoreFromXmlFile()
     {
         _xmlService.RestoreFromXmlFile();
     }
-    
+
     public void SaveToXmlFile()
     {
         _xmlService.SaveToXmlFile();
@@ -40,7 +41,7 @@ public class AdminDatabaseService : HospitalManagementSystemBaseDb<Admin>, IData
                 .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola))
                 .ReverseMap());
     }
-    
+
     private MapperConfiguration InitializeMapperConfigurationDTO()
     {
         return new MapperConfiguration(cfg =>

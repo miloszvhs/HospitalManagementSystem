@@ -1,19 +1,16 @@
 ﻿using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Interfaces;
 using HospitalManagementSystem.Domain.ValueObjects;
-using HospitalManagementSystem.Infrastructure.Database;
-using HospitalManagementSystem.Shared.Abstractions;
 using HospitalManagementSystem.Shared.Abstractions.Exceptions;
 
 namespace HospitalManagementSystem.Application.Services;
 
 public class LoginService
 {
-    private readonly IDatabaseService<Employee> _employeeDatabase;
-    private readonly IDatabaseService<Doctor> _doctorDatabase;
     private readonly IDatabaseService<Admin> _adminDatabase;
+    private readonly IDatabaseService<Doctor> _doctorDatabase;
+    private readonly IDatabaseService<Employee> _employeeDatabase;
     private readonly PasswordHasherService _passwordHasherService;
-    private List<Employee> _database { get; } = new();
 
     public LoginService(IDatabaseService<Employee> employeeDatabase,
         IDatabaseService<Doctor> doctorDatabase,
@@ -24,18 +21,20 @@ public class LoginService
         _employeeDatabase = employeeDatabase;
         _doctorDatabase = doctorDatabase;
         _adminDatabase = adminDatabase;
-        
+
         _database.AddRange(employeeDatabase.Users);
         _database.AddRange(doctorDatabase.Users);
         _database.AddRange(adminDatabase.Users);
     }
-    
+
+    private List<Employee> _database { get; } = new();
+
     public Employee Login()
     {
         var succeeded = false;
-        
+
         var usernameInput = WriteAndRead("Login: ");
-        
+
         HospitalManagementSystemUsername userLogin = new(usernameInput);
 
         var passwordInput = WriteAndRead("Password: ");
@@ -46,20 +45,16 @@ public class LoginService
 
         try
         {
-            if (employee is null)
-            {
-                throw new CannotFindUserException(userLogin);
-            }
-        
-            succeeded = _passwordHasherService.ValidatePassword(employee, userPassword);
+            if (employee is null) throw new CannotFindUserException(userLogin);
 
+            succeeded = _passwordHasherService.ValidatePassword(employee, userPassword);
         }
         catch (Exception e)
         {
             Console.WriteLine($"Wystąpił problem z logowaniem:\n{e.Message}");
         }
 
-        if(succeeded)
+        if (succeeded)
         {
             Console.WriteLine("Pomyślnie zalogowano!");
             return employee;
@@ -71,9 +66,9 @@ public class LoginService
     private string WriteAndRead(string value)
     {
         Console.Write(value);
-        
+
         var result = Console.ReadLine();
-        
+
         return result;
     }
 }

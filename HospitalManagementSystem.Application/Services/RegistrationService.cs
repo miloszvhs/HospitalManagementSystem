@@ -30,7 +30,7 @@ public class RegistrationService
 
         try
         {
-            employee = new(
+            employee = new Employee(
                 new HospitalManagementSystemUsername(username),
                 new HospitalManagementSystemPassword(password),
                 new HospitalManagementSystemId(_database.GetLastId() + 1),

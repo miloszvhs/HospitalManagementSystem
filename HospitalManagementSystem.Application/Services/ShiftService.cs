@@ -1,12 +1,19 @@
-﻿using HospitalManagementSystem.Domain.Interfaces;
+﻿using HospitalManagementSystem.Domain.Entities;
+using HospitalManagementSystem.Domain.Interfaces;
 
 namespace HospitalManagementSystem.Application.Services;
 
 public class ShiftService : IShiftService
 {
-    public void ShowShifts()
+    private readonly List<Shift> Shifts;
+
+    public ShiftService()
     {
         
+    }
+    
+    public void ShowShifts()
+    {
     }
 
     public int AddShift()
@@ -23,4 +30,10 @@ public class ShiftService : IShiftService
     {
         return true;
     }
+    
+    private List<Shift> RestoreShiftsFromXML()
+    {
+        return new List<Shift>();
+    }
+
 }
