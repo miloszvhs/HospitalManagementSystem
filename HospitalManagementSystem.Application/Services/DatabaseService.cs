@@ -2,20 +2,20 @@
 using HospitalManagementSystem.Application.DTOModels;
 using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Interfaces;
-using HospitalManagementSystem.Shared.Abstractions;
+using HospitalManagementSystem.Infrastructure.Database;
 
 namespace HospitalManagementSystem.Application.Services;
 
-public class EmployeeDatabaseService : HospitalManagementSystemBaseDb<Employee>, IDatabaseService<Employee>
+public class DatabaseService : EmployeeHospitalManagementSystemDb, IDatabaseService
 {
-    private readonly XMLService<Employee, EmployeeDTO> _xmlService;
+    private XMLService<Employee, EmployeeDTO> _xmlService;
 
-    public EmployeeDatabaseService()
+    
+    public DatabaseService()
     {
         var mapperConfiguration = InitializeMapperConfiguration();
-
         var mapperConfigurationDTO = InitializeMapperConfigurationDTO();
-
+        
         _xmlService = new XMLService<Employee, EmployeeDTO>(this, "employees.xml", "Employees", mapperConfiguration,
             mapperConfigurationDTO);
     }
@@ -30,6 +30,86 @@ public class EmployeeDatabaseService : HospitalManagementSystemBaseDb<Employee>,
         _xmlService.SaveToXmlFile();
     }
 
+    public void AddEmployee(Employee employee)
+    {
+        AddUser(employee);
+    }
+
+    public int UpdateEmployee(Employee employee)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int RemoveEmployee(int id)
+    {
+        var user = GetUser(id);
+
+        if (user is not null)
+        {
+            user.IsDeleted = true;
+            return 1;
+        }
+
+        return 0;
+    }
+    
+    public List<Employee> GetAllEmployees()
+    {
+        var users = Users;
+        return users;
+    }
+
+    public Employee GetEmployee(int id)
+    {
+        var employee = Users.FirstOrDefault(x => x.Id == id);
+
+        if (employee is not null)
+        {
+            return employee;
+        }
+
+        return null;
+    }
+
+    public int GetLastId()
+    {
+        var lastId = GetLastId();
+        return lastId;
+    }
+    
+    public Employee GetUser(int id)
+    {
+        var user = GetUser(id);
+
+        return user;
+    }
+
+    public int DeleteUser(int id)
+    {
+        var user = GetUser(id);
+
+        if (user is not null)
+        {
+            RemoveUser(user);
+            return 1;
+        }
+
+        return 0;
+    }
+
+    public int ChangeUser(Employee employee)
+    {
+        var user = GetUser(employee.Id);
+
+        if (user is not null)
+        {
+            user = employee;
+            return 1;
+        }
+
+        return 0;
+    }
+    
     private MapperConfiguration InitializeMapperConfiguration()
     {
         return new MapperConfiguration(cfg =>

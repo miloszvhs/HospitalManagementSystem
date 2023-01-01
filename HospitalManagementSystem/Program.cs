@@ -8,22 +8,15 @@ internal class Program
 {
     public static void Main()
     {
+        IDatabaseService database = new DatabaseService();
+        var shiftService = new ShiftService(database);
         var passwordService = new PasswordHasherService();
-        var shiftService = new ShiftService();
-        IDatabaseService<Admin> adminDatabase = new AdminDatabaseService();
-        IDatabaseService<Doctor> doctorDatabase = new DoctorDatabaseService();
-        IDatabaseService<Employee> employeeDatabase = new EmployeeDatabaseService();
 
-        adminDatabase.RestoreFromXmlFile();
-        doctorDatabase.RestoreFromXmlFile();
-        employeeDatabase.RestoreFromXmlFile();
+        database.RestoreFromXmlFile();
 
-        var pwzNumberService = new PWZNumberService(doctorDatabase);
-        var registrationService = new RegistrationService(employeeDatabase, passwordService);
-        var loginService = new LoginService(employeeDatabase,
-            doctorDatabase,
-            adminDatabase,
-            passwordService);
+        var pwzNumberService = new PWZNumberService(database);
+        var registrationService = new RegistrationService(database, passwordService);
+        var loginService = new LoginService(database, passwordService);
         var menuService = new MenuActionService();
 
         while (true)
@@ -43,12 +36,10 @@ internal class Program
                         {
                             case Role.Administrator:
                                 var adminOperations = new AdminOperations(menuService,
-                                    adminDatabase,
-                                    doctorDatabase,
-                                    employeeDatabase,
                                     shiftService,
                                     passwordService,
-                                    pwzNumberService);
+                                    pwzNumberService,
+                                    database);
 
                                 adminOperations.Run();
                                 break;

@@ -6,10 +6,10 @@ namespace HospitalManagementSystem.Application.Services;
 
 public class RegistrationService
 {
-    private readonly IDatabaseService<Employee> _database;
+    private readonly IDatabaseService _database;
     private readonly PasswordHasherService _passwordHasherService;
 
-    public RegistrationService(IDatabaseService<Employee> database,
+    public RegistrationService(IDatabaseService database,
         PasswordHasherService passwordHasherService)
     {
         _database = database;
@@ -44,7 +44,7 @@ public class RegistrationService
         }
 
         Console.WriteLine($"Pomyslnie stworzono pracownika {employee.Username.Value}");
-        _database.AddUser(employee);
+        _database.AddEmployee(employee);
         _database.SaveToXmlFile();
         return employee;
     }

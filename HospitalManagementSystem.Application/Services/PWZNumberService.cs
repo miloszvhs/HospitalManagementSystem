@@ -5,9 +5,9 @@ namespace HospitalManagementSystem.Application.Services;
 
 public class PWZNumberService : IPWZNumberService
 {
-    private readonly IDatabaseService<Doctor> _database;
+    private readonly IDatabaseService _database;
 
-    public PWZNumberService(IDatabaseService<Doctor> database)
+    public PWZNumberService(IDatabaseService database)
     {
         _database = database;
     }
@@ -22,7 +22,7 @@ public class PWZNumberService : IPWZNumberService
         {
             pwz = GeneratePWZ();
 
-            if (!_database.Users.Exists(x => x.Pwz == pwz)) break;
+            if (!_database.GetAllEmployees().Exists(x => x.DoctorPrivileges.Pwz == pwz)) break;
         }
 
         return pwz;

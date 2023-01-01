@@ -10,6 +10,8 @@ public class Employee : BaseEntity
     public HospitalManagementSystemUsername Username { get; }
     public HospitalManagementSystemPassword Password { get; }
     public Role Rola { get; init; }
+    public DoctorPrivileges DoctorPrivileges { get; set; }
+    public bool IsDeleted { get; set; } = false;
 
     public Employee()
     {

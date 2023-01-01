@@ -5,29 +5,50 @@ namespace HospitalManagementSystem.Application.Services;
 
 public class ShiftService : IShiftService
 {
-    private readonly List<Shift> Shifts;
+    private readonly List<Shift> Shifts = new();
+    private readonly IDatabaseService _database;
 
-    public ShiftService()
+    public ShiftService(IDatabaseService database)
+    {
+        _database = database;
+    }
+    
+    public void ShowDoctorShifts()
+    {
+        foreach (var doctor in _database.GetAllEmployees().Where(x => x.Rola == Role.Lekarz))
+        {
+            
+        }
+    }
+
+    public void ShowEmployeeShifts()
     {
         
     }
-    
+
     public void ShowShifts()
     {
+        ShowDoctorShifts();
+        ShowEmployeeShifts();
     }
 
-    public int AddShift()
+    public int AddShift(int id)
     {
-        throw new NotImplementedException();
+        var user = "";
+        return 1;
     }
-
-    public int EditShift()
+    
+    public int ChangeShift()
     {
         throw new NotImplementedException();
     }
 
     private bool CheckIfShiftIsPossible()
     {
+        if (Shifts.)
+        {
+            
+        }
         return true;
     }
     

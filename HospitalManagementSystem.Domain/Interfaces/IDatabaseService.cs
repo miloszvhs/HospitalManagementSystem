@@ -2,14 +2,14 @@
 
 namespace HospitalManagementSystem.Domain.Interfaces;
 
-public interface IDatabaseService<T> where T : class
+public interface IDatabaseService
 {
-    List<T> Users { get; set; }
     void RestoreFromXmlFile();
     void SaveToXmlFile();
-    void AddUser(T user);
-    void UpdateUser(T user);
-    void RemoveUser(T user);
-    T GetUser(int id);
+    void AddEmployee(Employee employee);
+    int UpdateEmployee(Employee employee);
+    int RemoveEmployee(int id);
+    public List<Employee> GetAllEmployees();
+    Employee GetEmployee(int id);
     int GetLastId();
 }
