@@ -5,13 +5,13 @@ using HospitalManagementSystem.Shared.Abstractions.Exceptions;
 
 namespace HospitalManagementSystem.Application.Services;
 
-public class LoginService
+public class LoginService : ILoginService
 {
     private readonly IDatabaseService _database;
-    private readonly PasswordHasherService _passwordHasherService;
+    private readonly IPasswordHasherService _passwordHasherService;
 
     public LoginService(IDatabaseService database,
-        PasswordHasherService passwordHasherService)
+        IPasswordHasherService passwordHasherService)
     {
         _passwordHasherService = passwordHasherService;
         _database = database;
@@ -30,7 +30,7 @@ public class LoginService
 
         HospitalManagementSystemPassword userPassword = new(_passwordHasherService.HashPassword(passwordInput));
 
-        var employee = _database.GetAllEmployees().FirstOrDefault(x => x.Username == userLogin);
+        var employee = _database.Users.FirstOrDefault(x => x.Username == userLogin);
 
         try
         {

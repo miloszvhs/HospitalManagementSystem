@@ -1,67 +1,74 @@
 ﻿using System.Xml.Serialization;
 using AutoMapper;
-using HospitalManagementSystem.Shared.Abstractions;
+using HospitalManagementSystem.Application.DTOModels;
+using HospitalManagementSystem.Domain.Entities;
+using HospitalManagementSystem.Domain.Interfaces;
 
 namespace HospitalManagementSystem.Application.Services;
 
-public class XMLService<T, V> where T : BaseEntity
+public class XMLService
 {
-    private readonly HospitalManagementSystemBaseDb<T> _database;
+    private readonly IDatabaseService _database;
     private readonly MapperConfiguration _mapperConfiguration;
     private readonly MapperConfiguration _mapperConfigurationDTO;
 
-    public XMLService(HospitalManagementSystemBaseDb<T> database, string path, string elementName,
+    private string path { get; }
+    private string elementName { get; }
+    
+    public XMLService(IDatabaseService database, string path, string elementName,
         MapperConfiguration mapperConfiguration,
         MapperConfiguration mapperConfigurationDTO)
     {
-        _path = path;
-        _elementName = elementName;
+        this.path = path;
+        this.elementName = elementName;
         _database = database;
         _mapperConfiguration = mapperConfiguration;
         _mapperConfigurationDTO = mapperConfigurationDTO;
     }
 
-    private string _path { get; }
-    private string _elementName { get; }
-
     public void RestoreFromXmlFile()
     {
-        if (File.Exists(_path))
+        if (File.Exists(path))
         {
-            var xml = File.ReadAllText(_path);
+            var xml = File.ReadAllText(path);
 
             StringReader sr = new(xml);
 
             XmlRootAttribute root = new();
-            root.ElementName = _elementName;
+            root.ElementName = elementName;
             root.IsNullable = true;
 
-            XmlSerializer serializer = new(typeof(List<V>), root);
+            XmlSerializer serializer = new(typeof(List<EmployeeDTO>), root);
 
-            var xmlUsersDTO = (List<V>)serializer.Deserialize(sr);
+            var xmlUsersDTO = (List<EmployeeDTO>)serializer.Deserialize(sr);
 
             var mapper = new Mapper(_mapperConfiguration);
-            var xmlUsers = mapper.Map<List<T>>(xmlUsersDTO);
+            var xmlUsers = mapper.Map<List<Employee>>(xmlUsersDTO);
 
-            _database.Users = new List<T>(xmlUsers);
+            var employees = _database.Users;
+            employees = new List<Employee>(xmlUsers);
         }
         else
         {
-            Console.WriteLine($"Nie można pobrać danych z pliku.\nBrak pliku {_elementName}.xml");
+            Console.WriteLine($"Nie można pobrać danych z pliku.\nBrak pliku {elementName}.xml");
+            _database.Seed();
+            Console.WriteLine($"W tym przypadku stworzono nowy plik {elementName}.xml");
         }
     }
 
+    /// <param name="useUsersFromSeed">If file doesn't exist, then create a new one with default seed</param>
     public void SaveToXmlFile()
     {
+        var employees = _database.Users;
         var mapper = new Mapper(_mapperConfigurationDTO);
-        var usersDTO = mapper.Map<List<V>>(_database.Users);
-
+        var employeesDTO = mapper.Map<List<EmployeeDTO>>(employees);
+        
         XmlRootAttribute root = new();
-        root.ElementName = _elementName;
+        root.ElementName = elementName;
         root.IsNullable = true;
-        XmlSerializer serializer = new(typeof(List<V>), root);
+        XmlSerializer serializer = new(typeof(List<EmployeeDTO>), root);
 
-        using StreamWriter sw = new(_path);
-        serializer.Serialize(sw, usersDTO);
+        using StreamWriter sw = new(path);
+        serializer.Serialize(sw, employeesDTO);
     }
 }

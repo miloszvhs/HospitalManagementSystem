@@ -48,7 +48,8 @@ public abstract class HospitalManagementSystemBaseDb<T> where T : BaseEntity
     {
         if (Users.Any())
         {
-            return Users.OrderBy(x => x.Id).LastOrDefault().Id;   
+            var id = Users.OrderBy(x => x.Id).LastOrDefault().Id;
+            return id;   
         }
 
         return 1;

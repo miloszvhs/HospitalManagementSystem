@@ -11,7 +11,6 @@ public class Employee : BaseEntity
     public HospitalManagementSystemPassword Password { get; }
     public Role Rola { get; init; }
     public DoctorPrivileges DoctorPrivileges { get; set; }
-    public bool IsDeleted { get; set; } = false;
 
     public Employee()
     {
@@ -27,14 +26,24 @@ public class Employee : BaseEntity
         HospitalManagementSystemPassword password,
         HospitalManagementSystemId id,
         HospitalManagementSystemName name,
-        HospitalManagementSystemName lastName)
+        HospitalManagementSystemName lastName,
+        Role rola) : this(username, password)
     {
-        Username = username;
-        Password = password;
         Name = name;
         Id = id;
         LastName = lastName;
-        Rola = Role.Pracownik;
+        Rola = rola;
+    }
+
+    public Employee(HospitalManagementSystemUsername username,
+        HospitalManagementSystemPassword password,
+        HospitalManagementSystemId id,
+        HospitalManagementSystemName name,
+        HospitalManagementSystemName lastName,
+        Role rola,
+        DoctorPrivileges doctorPrivileges) : this(username, password, id, name, lastName, rola)
+    {
+        DoctorPrivileges = doctorPrivileges;
     }
 }
 

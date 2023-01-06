@@ -1,10 +1,11 @@
-﻿namespace HospitalManagementSystem.Domain.Interfaces;
+﻿using HospitalManagementSystem.Domain.Entities;
+
+namespace HospitalManagementSystem.Domain.Interfaces;
 
 public interface IShiftService
 {
-    public void ShowDoctorShifts();
-    public void ShowEmployeeShifts();
-    public void ShowShifts();
-    public int AddShift(int id);
-    public int ChangeShift();
+    void ShowAllShifts();
+    int AddShift(DateTime date, Employee employee);
+    int EditShift();
+    void SetEmployee(Employee employee);
 }

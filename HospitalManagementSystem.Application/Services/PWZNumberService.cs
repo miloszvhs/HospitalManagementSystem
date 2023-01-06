@@ -22,7 +22,7 @@ public class PWZNumberService : IPWZNumberService
         {
             pwz = GeneratePWZ();
 
-            if (!_database.GetAllEmployees().Exists(x => x.DoctorPrivileges.Pwz == pwz)) break;
+            if (_database.Users.FirstOrDefault(x => x.DoctorPrivileges.Pwz == pwz) is null) break;
         }
 
         return pwz;

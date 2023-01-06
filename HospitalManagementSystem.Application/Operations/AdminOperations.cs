@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using HospitalManagementSystem.Application.Services;
+﻿using HospitalManagementSystem.Application.Services;
 using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Interfaces;
 using HospitalManagementSystem.Domain.ValueObjects;
@@ -9,38 +8,42 @@ namespace HospitalManagementSystem.Application.Operations;
 public class AdminOperations
 {
     private readonly IDatabaseService _database;
-    private readonly MenuActionService _menuActionService;
+    private readonly IMenuActionService _menuActionService;
     private readonly IPasswordHasherService _passwordHasherService;
     private readonly IPWZNumberService _pwzNumberService;
     private readonly IShiftService _shiftService;
+    private readonly Employee _employee;
 
 
-    public AdminOperations(MenuActionService menuActionService,
+    public AdminOperations(IMenuActionService menuActionService,
+        IDatabaseService database,
         IShiftService shiftService,
         IPasswordHasherService passwordHasherService,
         IPWZNumberService pwzNumberService, 
-        IDatabaseService database)
+        Employee employee)
     {
         _menuActionService = menuActionService;
+        _database = database;
         _shiftService = shiftService;
         _passwordHasherService = passwordHasherService;
         _pwzNumberService = pwzNumberService;
-        _database = database;
+        _employee = employee;
     }
 
     public void Run()
     {
         while (true)
         {
+            _shiftService.SetEmployee(_employee);
             _menuActionService.DrawMenuViewByMenuType("Admin");
 
             var input = Console.ReadKey();
             Console.WriteLine();
-            
+
             switch (input.KeyChar)
             {
                 case '1':
-                    _shiftService.ShowShifts();
+                    _shiftService.ShowAllShifts();
                     break;
                 case '2':
                     ShowUsers();
@@ -66,22 +69,7 @@ public class AdminOperations
     private void ChangeUser()
     {
         Console.Write("Podaj ID użytkownika, którego chcesz zmienić: ");
-        var userId = 0;
-        try
-        {
-            userId = int.Parse(Console.ReadLine());
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
-        
-        var user = _database.GetAllEmployees().FirstOrDefault(x => x.Id == userId);
-
-        if (user is not null)
-        {
-            user = newUser;
-        }
+        var userId = Console.ReadLine();
     }
 
     private void DeleteUser()
@@ -94,14 +82,18 @@ public class AdminOperations
     {
         Console.Write("Imię: ");
         var name = Console.ReadLine();
+        
         Console.Write("Nazwisko: ");
         var lastName = Console.ReadLine();
+        
         Console.Write("Nazwa użytkownika: ");
         var username = Console.ReadLine();
+        
         Console.Write("Hasło: ");
         var password = _passwordHasherService.HashPassword(Console.ReadLine());
-        Console.Write("Rola: ");
+        
         _menuActionService.DrawMenuViewByMenuType("Roles");
+        Console.Write("Rola: ");
         var role = Console.ReadLine();
 
         try
@@ -109,12 +101,13 @@ public class AdminOperations
             switch (role)
             {
                 case "0":
-                    _employeeDatabase.AddUser(new Employee(new HospitalManagementSystemUsername(username),
+                    _database.AddEmployee(new Employee(new HospitalManagementSystemUsername(username),
                         new HospitalManagementSystemPassword(password),
-                        new HospitalManagementSystemId(_employeeDatabase.GetLastId() + 1),
+                        new HospitalManagementSystemId(_database.GetLastId() + 1),
                         new HospitalManagementSystemName(name),
-                        new HospitalManagementSystemName(lastName)));
-                    _employeeDatabase.SaveToXmlFile();
+                        new HospitalManagementSystemName(lastName),
+                        Role.Pracownik));
+                    _database.SaveToXmlFile();
                     break;
                 case "1":
                     Console.WriteLine("Specjalizacja: ");
@@ -130,22 +123,25 @@ public class AdminOperations
                         _ => throw new Exception("Wybrano niepoprawną specjalizację")
                     };
 
-                    _doctorDatabase.AddUser(new Doctor(new HospitalManagementSystemUsername(username),
+                    _database.AddEmployee(new Employee(new HospitalManagementSystemUsername(username),
                         new HospitalManagementSystemPassword(password),
-                        _doctorDatabase.GetLastId() + 1,
+                        _database.GetLastId() + 1,
                         new HospitalManagementSystemName(name),
                         new HospitalManagementSystemName(lastName),
-                        new HospitalManagementSystemPWZ(_pwzNumberService.GetNewPWZ().ToString()),
-                        userSpecialization));
-                    _doctorDatabase.SaveToXmlFile();
+                        Role.Lekarz,
+                        new DoctorPrivileges(new HospitalManagementSystemPWZ(_pwzNumberService.GetNewPWZ().ToString()),
+                        userSpecialization)
+                        ));
+                    _database.SaveToXmlFile();
                     break;
                 case "2":
-                    _adminDatabase.AddUser(new Admin(new HospitalManagementSystemUsername(username),
+                    _database.AddEmployee(new Employee(new HospitalManagementSystemUsername(username),
                         new HospitalManagementSystemPassword(password),
-                        _adminDatabase.GetLastId() + 1,
+                        _database.GetLastId() + 1,
                         new HospitalManagementSystemName(name),
-                        new HospitalManagementSystemName(lastName)));
-                    _adminDatabase.SaveToXmlFile();
+                        new HospitalManagementSystemName(lastName),
+                        Role.Administrator));
+                    _database.SaveToXmlFile();
                     break;
             }
 
@@ -162,29 +158,21 @@ public class AdminOperations
     {
         Console.Write("Numer\tId\tTyp\t\tImie\t\tPWZ\tSpecjalizacja\n");
 
-        foreach (var objectsList in new List<IEnumerable<Employee>>
-                     { _adminDatabase.Users, _doctorDatabase.Users, _employeeDatabase.Users })
-        {
-            
-            foreach (var (user, index) in objectsList.Select((x, y) => (x, y + 1)))
+        foreach (var (user, index) in _database.Users.Select((x, y) => (x, y + 1)))
+            switch (user.Rola)
             {
-                switch (user.GetType().Name)
-                {
-                    case "Admin":
-                        Console.WriteLine(
-                            $"{index}.\t{user.Id}\t{string.Format("{0, -10}", user.GetType().Name)}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
-                        break;
-                    case "Doctor":
-                        var doctorUser = (Doctor)user;
-                        Console.WriteLine(
-                            $"{index}.\t{user.Id}\t{user.GetType().Name}\t\t{string.Format("{0, -15}", user.Name.Value)}\t{doctorUser.Pwz.Value}\t{doctorUser.Specjalizacja}");
-                        break;
-                    case "Employee":
-                        Console.WriteLine(
-                            $"{index}.\t{user.Id}\t{user.GetType().Name}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
-                        break;
-                }
+                case Role.Administrator:
+                    Console.WriteLine(
+                        $"{index}.\t{user.Id}\t{string.Format("{0, -10}", user.Rola)}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
+                    break;
+                case Role.Lekarz:
+                    Console.WriteLine(
+                        $"{index}.\t{user.Id}\t{user.GetType().Name}\t\t{string.Format("{0, -15}", user.Name.Value)}\t{user.DoctorPrivileges.Pwz}\t{user.DoctorPrivileges.Specjalizacja}");
+                    break;
+                case Role.Pracownik:
+                    Console.WriteLine(
+                        $"{index}.\t{user.Id}\t{user.GetType().Name}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
+                    break;
             }
-        }
     }
 }

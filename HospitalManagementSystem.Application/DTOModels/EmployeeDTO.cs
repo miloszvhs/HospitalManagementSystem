@@ -1,4 +1,6 @@
-﻿namespace HospitalManagementSystem.Application.DTOModels;
+﻿using HospitalManagementSystem.Domain.Entities;
+
+namespace HospitalManagementSystem.Application.DTOModels;
 
 public class EmployeeDTO
 {
@@ -8,4 +10,5 @@ public class EmployeeDTO
     public string Username { get; set; }
     public byte[] Password { get; set; }
     public int Role { get; set; }
+    public DoctorPrivilegesDTO DoctorPrivileges { get; set; }
 }

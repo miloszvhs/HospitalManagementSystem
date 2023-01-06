@@ -2,21 +2,23 @@
 using HospitalManagementSystem.Application.DTOModels;
 using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Interfaces;
+using HospitalManagementSystem.Domain.ValueObjects;
 using HospitalManagementSystem.Infrastructure.Database;
 
 namespace HospitalManagementSystem.Application.Services;
 
-public class DatabaseService : EmployeeHospitalManagementSystemDb, IDatabaseService
+public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
 {
-    private XMLService<Employee, EmployeeDTO> _xmlService;
-
+    private readonly XMLService _xmlService;
+    private readonly IPasswordHasherService _passwordHasherService; 
     
-    public DatabaseService()
+    public DatabaseService(IPasswordHasherService passwordHasherService)
     {
+        _passwordHasherService = passwordHasherService;
         var mapperConfiguration = InitializeMapperConfiguration();
         var mapperConfigurationDTO = InitializeMapperConfigurationDTO();
         
-        _xmlService = new XMLService<Employee, EmployeeDTO>(this, "employees.xml", "Employees", mapperConfiguration,
+        _xmlService = new XMLService(this, "employees.xml", "Employees", mapperConfiguration,
             mapperConfigurationDTO);
     }
 
@@ -46,17 +48,10 @@ public class DatabaseService : EmployeeHospitalManagementSystemDb, IDatabaseServ
 
         if (user is not null)
         {
-            user.IsDeleted = true;
             return 1;
         }
 
         return 0;
-    }
-    
-    public List<Employee> GetAllEmployees()
-    {
-        var users = Users;
-        return users;
     }
 
     public Employee GetEmployee(int id)
@@ -73,20 +68,31 @@ public class DatabaseService : EmployeeHospitalManagementSystemDb, IDatabaseServ
 
     public int GetLastId()
     {
-        var lastId = GetLastId();
-        return lastId;
+        var id = base.GetLastId();
+        return id;
     }
-    
+
+    public void Seed()
+    {
+        AddUser(new Employee(new HospitalManagementSystemUsername("Admin"),
+            new HospitalManagementSystemPassword(_passwordHasherService.HashPassword("Admin")),
+            new HospitalManagementSystemId(1),
+            new HospitalManagementSystemName("Admin"),
+            new HospitalManagementSystemName("Admin"),
+            Role.Administrator));
+        
+        _xmlService.SaveToXmlFile();
+    }
+
     public Employee GetUser(int id)
     {
-        var user = GetUser(id);
-
+        var user = base.GetUser(id);
         return user;
     }
 
     public int DeleteUser(int id)
     {
-        var user = GetUser(id);
+        var user = base.GetUser(id);
 
         if (user is not null)
         {
@@ -114,11 +120,12 @@ public class DatabaseService : EmployeeHospitalManagementSystemDb, IDatabaseServ
     {
         return new MapperConfiguration(cfg =>
             cfg.CreateMap<Employee, EmployeeDTO>()
-                .ForMember(x => x.Name, s => s.MapFrom(d => d.Name.Value))
-                .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
-                .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
-                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
+                .ForMember(x => x.Name, s => s.MapFrom(d => d.Name))
+                .ForMember(x => x.Password, s => s.MapFrom(d => d.Password))
+                .ForMember(x => x.Username, s => s.MapFrom(d => d.Username))
+                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName))
                 .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola))
+                .ForMember(x => x.DoctorPrivileges, s => s.MapFrom(d => d.DoctorPrivileges))
                 .ReverseMap());
     }
 
@@ -130,6 +137,8 @@ public class DatabaseService : EmployeeHospitalManagementSystemDb, IDatabaseServ
                 .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
                 .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
                 .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
-                .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola)));
+                .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola))
+                .ForMember(x => x.DoctorPrivileges, s => s.MapFrom(d => d.DoctorPrivileges))
+            );
     }
 }

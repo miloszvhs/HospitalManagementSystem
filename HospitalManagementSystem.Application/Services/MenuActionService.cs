@@ -1,8 +1,9 @@
 ﻿using HospitalManagementSystem.Domain.Entities;
+using HospitalManagementSystem.Domain.Interfaces;
 
 namespace HospitalManagementSystem.Application.Services;
 
-public class MenuActionService
+public class MenuActionService : IMenuActionService
 {
     private readonly List<MenuAction> _menuActions = new();
 
@@ -10,8 +11,6 @@ public class MenuActionService
     {
         InitializeMenu();
     }
-
-    public Employee Employee { get; }
 
     public void DrawMenuViewByMenuType(string menuType)
     {

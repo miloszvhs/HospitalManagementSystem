@@ -4,13 +4,13 @@ using HospitalManagementSystem.Domain.ValueObjects;
 
 namespace HospitalManagementSystem.Application.Services;
 
-public class RegistrationService
+public class RegistrationService : IRegistrationService
 {
     private readonly IDatabaseService _database;
-    private readonly PasswordHasherService _passwordHasherService;
+    private readonly IPasswordHasherService _passwordHasherService;
 
     public RegistrationService(IDatabaseService database,
-        PasswordHasherService passwordHasherService)
+        IPasswordHasherService passwordHasherService)
     {
         _database = database;
         _passwordHasherService = passwordHasherService;
@@ -19,12 +19,16 @@ public class RegistrationService
     public Employee Register()
     {
         Employee employee;
+        
         Console.Write("Imię: ");
         var name = Console.ReadLine();
+        
         Console.Write("Nazwisko: ");
         var lastName = Console.ReadLine();
+        
         Console.Write("Nazwa użytkownika: ");
         var username = Console.ReadLine();
+        
         Console.Write("Hasło: ");
         var password = _passwordHasherService.HashPassword(Console.ReadLine());
 
@@ -35,7 +39,8 @@ public class RegistrationService
                 new HospitalManagementSystemPassword(password),
                 new HospitalManagementSystemId(_database.GetLastId() + 1),
                 new HospitalManagementSystemName(name),
-                new HospitalManagementSystemName(lastName));
+                new HospitalManagementSystemName(lastName),
+                Role.Pracownik);
         }
         catch (Exception e)
         {

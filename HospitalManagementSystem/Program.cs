@@ -8,16 +8,16 @@ internal class Program
 {
     public static void Main()
     {
-        IDatabaseService database = new DatabaseService();
-        var shiftService = new ShiftService(database);
-        var passwordService = new PasswordHasherService();
+        IPasswordHasherService passwordService = new PasswordHasherService();
+        IDatabaseService databaseService = new DatabaseService(passwordService);
 
-        database.RestoreFromXmlFile();
-
-        var pwzNumberService = new PWZNumberService(database);
-        var registrationService = new RegistrationService(database, passwordService);
-        var loginService = new LoginService(database, passwordService);
-        var menuService = new MenuActionService();
+        databaseService.RestoreFromXmlFile();
+        
+        IShiftService shiftService = new ShiftService(databaseService);
+        IPWZNumberService pwzNumberService = new PWZNumberService(databaseService);
+        IRegistrationService registrationService = new RegistrationService(databaseService, passwordService);
+        ILoginService loginService = new LoginService(databaseService, passwordService);
+        IMenuActionService menuService = new MenuActionService();
 
         while (true)
         {
@@ -32,14 +32,16 @@ internal class Program
                     Employee employee;
 
                     if ((employee = loginService.Login()) != null)
+                    {
                         switch (employee.Rola)
                         {
                             case Role.Administrator:
                                 var adminOperations = new AdminOperations(menuService,
+                                    databaseService,
                                     shiftService,
                                     passwordService,
                                     pwzNumberService,
-                                    database);
+                                    employee);
 
                                 adminOperations.Run();
                                 break;
@@ -53,6 +55,7 @@ internal class Program
                                 Console.WriteLine("Niepoprawny typ");
                                 break;
                         }
+                    }
 
                     break;
                 case '2':
