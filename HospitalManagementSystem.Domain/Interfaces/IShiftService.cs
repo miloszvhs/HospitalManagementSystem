@@ -8,4 +8,6 @@ public interface IShiftService
     int AddShift(DateTime date, Employee employee);
     int EditShift();
     void SetEmployee(Employee employee);
+    void ShowDoctorShifts();
+    void ShowEmployeeShifts();
 }

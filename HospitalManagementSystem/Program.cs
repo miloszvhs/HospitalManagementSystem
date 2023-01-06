@@ -46,10 +46,19 @@ internal class Program
                                 adminOperations.Run();
                                 break;
                             case Role.Lekarz:
-                                var doctorOperations = new DoctorOperations();
+                                var doctorOperations = new DoctorOperations(databaseService,
+                                    menuService,
+                                    pwzNumberService,
+                                    shiftService,
+                                    employee);
+                                doctorOperations.Run();
                                 break;
                             case Role.Pracownik:
-                                var employeeOperations = new EmployeeOperations();
+                                var employeeOperations = new EmployeeOperations(databaseService,
+                                    menuService,
+                                    shiftService,
+                                    employee);
+                                employeeOperations.Run();
                                 break;
                             default:
                                 Console.WriteLine("Niepoprawny typ");

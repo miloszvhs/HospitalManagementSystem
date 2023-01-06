@@ -14,7 +14,6 @@ public class AdminOperations
     private readonly IShiftService _shiftService;
     private readonly Employee _employee;
 
-
     public AdminOperations(IMenuActionService menuActionService,
         IDatabaseService database,
         IShiftService shiftService,
@@ -159,6 +158,7 @@ public class AdminOperations
         Console.Write("Numer\tId\tTyp\t\tImie\t\tPWZ\tSpecjalizacja\n");
 
         foreach (var (user, index) in _database.Users.Select((x, y) => (x, y + 1)))
+        {
             switch (user.Rola)
             {
                 case Role.Administrator:
@@ -174,5 +174,6 @@ public class AdminOperations
                         $"{index}.\t{user.Id}\t{user.Rola}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
                     break;
             }
+        }
     }
 }

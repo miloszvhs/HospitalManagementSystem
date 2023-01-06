@@ -2,6 +2,11 @@
 
 public class DoctorPrivilegesDTO
 {
-    public string Pwz { get; }
-    public int Specjalizacja { get; }
+    public string Pwz { get; set; }
+    public int Specjalizacja { get; set; }
+
+    public DoctorPrivilegesDTO()
+    {
+        
+    }
 }

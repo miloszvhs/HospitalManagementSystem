@@ -1,8 +1,56 @@
 ﻿using HospitalManagementSystem.Application.Services;
+using HospitalManagementSystem.Domain.Entities;
+using HospitalManagementSystem.Domain.Interfaces;
 
 namespace HospitalManagementSystem.Application.Operations;
 
 public class EmployeeOperations
 {
-    private readonly MenuActionService _menuActionService;
+    private readonly IDatabaseService _database;
+    private readonly IMenuActionService _menuActionService;
+    private readonly IShiftService _shiftService;
+    private readonly Employee _employee;
+
+    public EmployeeOperations(IDatabaseService database, 
+        IMenuActionService menuActionService, 
+        IShiftService shiftService,
+        Employee employee)
+    {
+        _database = database;
+        _menuActionService = menuActionService;
+        _shiftService = shiftService;
+        _employee = employee;
+    }
+
+    public void Run()
+    {
+        while (true)
+        {
+            _shiftService.SetEmployee(_employee);
+            _menuActionService.DrawMenuViewByMenuType("Doctor");
+
+            var input = Console.ReadKey();
+            Console.WriteLine();
+
+            switch (input.KeyChar)
+            {
+                case '1':
+                    _shiftService.ShowDoctorShifts();
+                    break;
+                case '2':
+                    ShowUsers();
+                    break;
+                case '3':
+                    return;
+                default:
+                    Console.WriteLine("Niepoprawny input");
+                    break;
+            }
+        }
+    }
+
+    private void ShowUsers()
+    {
+        throw new NotImplementedException();
+    }
 }

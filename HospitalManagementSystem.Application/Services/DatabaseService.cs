@@ -121,13 +121,16 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
         return new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<EmployeeDTO, Employee>()
-                .ForMember(x => x.Name, s => s.MapFrom(d => d.Name))
-                .ForMember(x => x.Password, s => s.MapFrom(d => d.Password))
-                .ForMember(x => x.Username, s => s.MapFrom(d => d.Username))
-                .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName))
+                .ConstructUsing((EmployeeDTO src) => new Employee(src.Username, new HospitalManagementSystemPassword(src.Password), src.Id, src.Name, src.LastName, src.Role))
+                .ForMember(x => x.Name, s => s.MapFrom(d => new HospitalManagementSystemName(d.Name)))
+                .ForMember(x => x.Password, s => s.MapFrom(d => new HospitalManagementSystemPassword(d.Password)))
+                .ForMember(x => x.Username, s => s.MapFrom(d => new HospitalManagementSystemUsername(d.Username)))
+                .ForMember(x => x.LastName, s => s.MapFrom(d => new HospitalManagementSystemName(d.LastName)))
                 .ForMember(x => x.Rola, s => s.MapFrom(d => d.Role))
                 .ForMember(x => x.DoctorPrivileges, s => s.MapFrom(d => d.DoctorPrivileges));
-            cfg.CreateMap<DoctorPrivilegesDTO, DoctorPrivileges>();
+            cfg.CreateMap<DoctorPrivilegesDTO, DoctorPrivileges>()
+                .ForMember(x => x.Pwz, s => s.MapFrom(d => new HospitalManagementSystemPWZ(d.Pwz)))
+                .ForMember(x => x.Specjalizacja, s => s.MapFrom(d => d.Specjalizacja));
         });
     }
 
@@ -142,7 +145,9 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
                 .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
                 .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola))
                 .ForMember(x => x.DoctorPrivileges, s => s.MapFrom(d => d.DoctorPrivileges));
-            cfg.CreateMap<DoctorPrivileges, DoctorPrivilegesDTO>();
+            cfg.CreateMap<DoctorPrivileges, DoctorPrivilegesDTO>()
+                .ForMember(x => x.Pwz, s => s.MapFrom(d => d.Pwz.Value))
+                .ForMember(x => x.Specjalizacja, s => s.MapFrom(d => d.Specjalizacja));
         });
     }
 }
