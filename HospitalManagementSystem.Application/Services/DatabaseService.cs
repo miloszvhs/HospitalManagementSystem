@@ -15,11 +15,11 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
     public DatabaseService(IPasswordHasherService passwordHasherService)
     {
         _passwordHasherService = passwordHasherService;
+        var mapperConfigurationForDTO = InitializeMapperConfigurationFromDTO();
         var mapperConfiguration = InitializeMapperConfiguration();
-        var mapperConfigurationDTO = InitializeMapperConfigurationDTO();
         
-        _xmlService = new XMLService(this, "employees.xml", "Employees", mapperConfiguration,
-            mapperConfigurationDTO);
+        _xmlService = new XMLService(this, "employees.xml", "Employees", mapperConfigurationForDTO,
+            mapperConfiguration);
     }
 
     public void RestoreFromXmlFile()
@@ -116,29 +116,33 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
         return 0;
     }
     
-    private MapperConfiguration InitializeMapperConfiguration()
+    private MapperConfiguration InitializeMapperConfigurationFromDTO()
     {
         return new MapperConfiguration(cfg =>
-            cfg.CreateMap<Employee, EmployeeDTO>()
+        {
+            cfg.CreateMap<EmployeeDTO, Employee>()
                 .ForMember(x => x.Name, s => s.MapFrom(d => d.Name))
                 .ForMember(x => x.Password, s => s.MapFrom(d => d.Password))
                 .ForMember(x => x.Username, s => s.MapFrom(d => d.Username))
                 .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName))
-                .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola))
-                .ForMember(x => x.DoctorPrivileges, s => s.MapFrom(d => d.DoctorPrivileges))
-                .ReverseMap());
+                .ForMember(x => x.Rola, s => s.MapFrom(d => d.Role))
+                .ForMember(x => x.DoctorPrivileges, s => s.MapFrom(d => d.DoctorPrivileges));
+            cfg.CreateMap<DoctorPrivilegesDTO, DoctorPrivileges>();
+        });
     }
 
-    private MapperConfiguration InitializeMapperConfigurationDTO()
+    private MapperConfiguration InitializeMapperConfiguration()
     {
         return new MapperConfiguration(cfg =>
+        {
             cfg.CreateMap<Employee, EmployeeDTO>()
                 .ForMember(x => x.Name, s => s.MapFrom(d => d.Name.Value))
                 .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
                 .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
                 .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
                 .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola))
-                .ForMember(x => x.DoctorPrivileges, s => s.MapFrom(d => d.DoctorPrivileges))
-            );
+                .ForMember(x => x.DoctorPrivileges, s => s.MapFrom(d => d.DoctorPrivileges));
+            cfg.CreateMap<DoctorPrivileges, DoctorPrivilegesDTO>();
+        });
     }
 }

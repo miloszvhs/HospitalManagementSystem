@@ -9,21 +9,21 @@ namespace HospitalManagementSystem.Application.Services;
 public class XMLService
 {
     private readonly IDatabaseService _database;
+    private readonly MapperConfiguration _mapperConfigurationForDTO;
     private readonly MapperConfiguration _mapperConfiguration;
-    private readonly MapperConfiguration _mapperConfigurationDTO;
 
     private string path { get; }
     private string elementName { get; }
     
     public XMLService(IDatabaseService database, string path, string elementName,
-        MapperConfiguration mapperConfiguration,
-        MapperConfiguration mapperConfigurationDTO)
+        MapperConfiguration mapperConfigurationForDTO,
+        MapperConfiguration mapperConfiguration)
     {
         this.path = path;
         this.elementName = elementName;
         _database = database;
+        _mapperConfigurationForDTO = mapperConfigurationForDTO;
         _mapperConfiguration = mapperConfiguration;
-        _mapperConfigurationDTO = mapperConfigurationDTO;
     }
 
     public void RestoreFromXmlFile()
@@ -42,11 +42,10 @@ public class XMLService
 
             var xmlUsersDTO = (List<EmployeeDTO>)serializer.Deserialize(sr);
 
-            var mapper = new Mapper(_mapperConfiguration);
+            var mapper = new Mapper(_mapperConfigurationForDTO);
             var xmlUsers = mapper.Map<List<Employee>>(xmlUsersDTO);
 
-            var employees = _database.Users;
-            employees = new List<Employee>(xmlUsers);
+            _database.Users = new List<Employee>(xmlUsers);
         }
         else
         {
@@ -60,7 +59,7 @@ public class XMLService
     public void SaveToXmlFile()
     {
         var employees = _database.Users;
-        var mapper = new Mapper(_mapperConfigurationDTO);
+        var mapper = new Mapper(_mapperConfiguration);
         var employeesDTO = mapper.Map<List<EmployeeDTO>>(employees);
         
         XmlRootAttribute root = new();

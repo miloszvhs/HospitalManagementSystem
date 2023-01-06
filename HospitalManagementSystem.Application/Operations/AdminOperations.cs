@@ -167,11 +167,11 @@ public class AdminOperations
                     break;
                 case Role.Lekarz:
                     Console.WriteLine(
-                        $"{index}.\t{user.Id}\t{user.GetType().Name}\t\t{string.Format("{0, -15}", user.Name.Value)}\t{user.DoctorPrivileges.Pwz}\t{user.DoctorPrivileges.Specjalizacja}");
+                        $"{index}.\t{user.Id}\t{user.Rola}\t\t{string.Format("{0, -15}", user.Name.Value)}\t{user.DoctorPrivileges.Pwz.Value}\t{user.DoctorPrivileges.Specjalizacja}");
                     break;
                 case Role.Pracownik:
                     Console.WriteLine(
-                        $"{index}.\t{user.Id}\t{user.GetType().Name}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
+                        $"{index}.\t{user.Id}\t{user.Rola}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
                     break;
             }
     }
