@@ -33,7 +33,6 @@ public class AdminOperations
     {
         while (true)
         {
-            _shiftService.SetEmployee(_employee);
             _menuActionService.DrawMenuViewByMenuType("Admin");
 
             var input = Console.ReadKey();
@@ -42,7 +41,7 @@ public class AdminOperations
             switch (input.KeyChar)
             {
                 case '1':
-                    _shiftService.ShowAllShifts();
+                    _shiftService.Run();
                     break;
                 case '2':
                     ShowUsers();
@@ -68,13 +67,16 @@ public class AdminOperations
     private void ChangeUser()
     {
         Console.Write("Podaj ID użytkownika, którego chcesz zmienić: ");
-        var userId = Console.ReadLine();
+        var userId = CheckStringAndConvertToInt(Console.ReadLine());
+
     }
 
     private void DeleteUser()
     {
         Console.Write("Podaj ID użytkownika, które chcesz usunąć: ");
-        var userId = Console.ReadLine();
+        var userId = CheckStringAndConvertToInt(Console.ReadLine());
+
+        _database.RemoveEmployee(userId);
     }
 
     private void AddUser()
@@ -87,6 +89,9 @@ public class AdminOperations
         
         Console.Write("Nazwa użytkownika: ");
         var username = Console.ReadLine();
+        
+        Console.Write("Pesel: ");
+        var pesel = Console.ReadLine();
         
         Console.Write("Hasło: ");
         var password = _passwordHasherService.HashPassword(Console.ReadLine());
@@ -102,6 +107,7 @@ public class AdminOperations
                 case "0":
                     _database.AddEmployee(new Employee(new HospitalManagementSystemUsername(username),
                         new HospitalManagementSystemPassword(password),
+                        new HospitalManagementSystemPesel(pesel),
                         new HospitalManagementSystemId(_database.GetLastId() + 1),
                         new HospitalManagementSystemName(name),
                         new HospitalManagementSystemName(lastName),
@@ -124,6 +130,7 @@ public class AdminOperations
 
                     _database.AddEmployee(new Employee(new HospitalManagementSystemUsername(username),
                         new HospitalManagementSystemPassword(password),
+                        new HospitalManagementSystemPesel(pesel),
                         _database.GetLastId() + 1,
                         new HospitalManagementSystemName(name),
                         new HospitalManagementSystemName(lastName),
@@ -136,6 +143,7 @@ public class AdminOperations
                 case "2":
                     _database.AddEmployee(new Employee(new HospitalManagementSystemUsername(username),
                         new HospitalManagementSystemPassword(password),
+                        new HospitalManagementSystemPesel(pesel),
                         _database.GetLastId() + 1,
                         new HospitalManagementSystemName(name),
                         new HospitalManagementSystemName(lastName),
@@ -175,5 +183,25 @@ public class AdminOperations
                     break;
             }
         }
+    }
+
+    private int CheckStringAndConvertToInt(string text)
+    {
+        int result = 0;
+
+        
+        try
+        {
+            if (!int.TryParse(text, out result))
+            {
+                throw new Exception($"Cannot parse {text} to int.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+        return result;
     }
 }

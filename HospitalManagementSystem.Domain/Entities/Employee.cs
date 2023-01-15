@@ -9,6 +9,7 @@ public class Employee : BaseEntity
     public HospitalManagementSystemName LastName { get; }
     public HospitalManagementSystemUsername Username { get; }
     public HospitalManagementSystemPassword Password { get; }
+    public HospitalManagementSystemPesel Pesel { get; }
     public Role Rola { get; init; }
     public DoctorPrivileges? DoctorPrivileges { get; set; }
 
@@ -24,11 +25,13 @@ public class Employee : BaseEntity
     
     public Employee(HospitalManagementSystemUsername username,
         HospitalManagementSystemPassword password,
+        HospitalManagementSystemPesel pesel,
         HospitalManagementSystemId id,
         HospitalManagementSystemName name,
         HospitalManagementSystemName lastName,
         Role rola) : this(username, password)
     {
+        Pesel = pesel;
         Name = name;
         Id = id;
         LastName = lastName;
@@ -37,11 +40,12 @@ public class Employee : BaseEntity
 
     public Employee(HospitalManagementSystemUsername username,
         HospitalManagementSystemPassword password,
+        HospitalManagementSystemPesel pesel,
         HospitalManagementSystemId id,
         HospitalManagementSystemName name,
         HospitalManagementSystemName lastName,
         Role rola,
-        DoctorPrivileges doctorPrivileges) : this(username, password, id, name, lastName, rola)
+        DoctorPrivileges doctorPrivileges) : this(username, password, pesel, id, name, lastName, rola)
     {
         DoctorPrivileges = doctorPrivileges;
     }

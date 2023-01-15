@@ -29,7 +29,6 @@ public class DoctorOperations
     {
         while (true)
         {
-            _shiftService.SetEmployee(_employee);
             _menuActionService.DrawMenuViewByMenuType("Doctor");
 
             var input = Console.ReadKey();
@@ -38,7 +37,7 @@ public class DoctorOperations
             switch (input.KeyChar)
             {
                 case '1':
-                    _shiftService.ShowDoctorShifts();
+                    _shiftService.Run();
                     break;
                 case '2':
                     ShowUsers();

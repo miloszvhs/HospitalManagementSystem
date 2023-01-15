@@ -8,7 +8,7 @@ public record HospitalManagementSystemName
 
     public HospitalManagementSystemName(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value) || !value.Any(char.IsLetter))
         {
             throw new EmptyHospitalManagementSystemNameException();
         }

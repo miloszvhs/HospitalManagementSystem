@@ -8,10 +8,13 @@ public class ShiftService : IShiftService
     private readonly IDatabaseService _database;
     private List<Shift> _shifts { get; } = new();
     private Employee actuallEmployee;
+    private IMenuActionService _menuActionService;
 
-    public ShiftService(IDatabaseService database)
+    public ShiftService(IDatabaseService database, 
+        IMenuActionService menuActionService)
     {
         _database = database;
+        _menuActionService = menuActionService;
     }
     
     public void ShowDoctorShifts()
@@ -33,12 +36,60 @@ public class ShiftService : IShiftService
         }
     }
 
+    public void Run()
+    {
+        while (true)
+        {   
+            _menuActionService.DrawMenuViewByMenuType("Shifts");
+            
+            var input = Console.ReadKey();
+            Console.WriteLine();
+
+            switch (input.KeyChar)
+            {
+                case '1':
+                    switch (actuallEmployee.Rola)
+                    {
+                        case Role.Administrator:
+                            ShowAllShifts();
+                            break;
+                        case Role.Lekarz:
+                            ShowDoctorShifts();
+                            break;
+                        case Role.Pracownik:
+                            ShowEmployeeShifts();
+                            break;
+                    }
+                    break;
+                case '2':
+                    Console.Write("Podaj date w formacie DD/MM/YYYY:");
+                    var date = ParseDate(Console.ReadLine());
+
+                    AddShift(date, actuallEmployee);
+                    break;
+                case '3':
+                    break;
+                case '4':
+                    return;
+                default:
+                    break;
+            }
+            
+        }
+    }
+
     public void ShowAllShifts()
     {
-        foreach (var employee in _database.Users.Where(x => x.Rola == Role.Lekarz ||
-                                                            x.Rola == Role.Pracownik))
+        if (_shifts.Any())
         {
-            
+            foreach (var shift in _shifts.Where(x => x.Date >= DateTime.Now))
+            {
+                Console.WriteLine($"{shift.Date}");
+                foreach (var employee in shift.Users)
+                {
+                    Console.WriteLine($"{employee.Id}. {employee.Username} {employee.DoctorPrivileges?.Specjalizacja}");
+                }
+            }    
         }
     }
     
@@ -54,7 +105,8 @@ public class ShiftService : IShiftService
 
     public int AddShift(DateTime date, Employee employee)
     {
-        var shift = _shifts.Find(x => x.Date == date);
+        var shift = _shifts.Find(x => x.Date.Date == date.Date);
+        date = date.Date;
         
         if (shift is not null)
         {
@@ -80,16 +132,62 @@ public class ShiftService : IShiftService
         }
         else
         {
-            _shifts.Add(new Shift(date));
+            if (!(CheckIfEmployeeHasShiftOneDayBehind(date, employee)) &&
+                !(CheckIfEmployeeHasShiftOneDayForward(date, employee)))
+            {
+                _shifts.Add(new Shift(date));
+            }
         }
 
         return employee.Id;
     }
-    
-    private DateTime? GetThePreviousShiftDate(DateTime date, Employee employee)
+
+    private bool CheckIfEmployeeHasShiftOneDayForward(DateTime date, Employee employee)
     {
-        var shift = _shifts.FindLast(x => x.Users.Contains(employee));
-        
-        return shift?.Date;
+        var shiftExist = _shifts.Exists(x => x.Date.Date == date.AddDays(1) && x.Users.Contains(employee));
+        return shiftExist;
+    }
+
+    private bool CheckIfEmployeeHasShiftOneDayBehind(DateTime date, Employee employee)
+    {
+        var shiftExist = _shifts.Exists(x => x.Date.Date == date.AddDays(-1) && x.Users.Contains(employee));
+        return shiftExist;
+    }
+
+    private bool CheckIfEmployeeHasLessThanTenShiftsInMonth(Employee employee)
+    {
+        var count = _shifts
+            .Where(x => x.Date.Month == DateTime.Now.Month)
+            .Count(x => x.Users.Contains(employee));
+
+        if (count <= 10)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public DateTime ParseDate(string text)
+    {
+        DateTime date;
+
+        try
+        {
+            if (!DateTime.TryParse(text, out date))
+            {
+                throw new Exception($"Cannot parse {text} to date.");
+            }
+
+            return date;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+        return default;
     }
 }

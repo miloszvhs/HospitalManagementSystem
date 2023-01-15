@@ -26,6 +26,9 @@ public class RegistrationService : IRegistrationService
         Console.Write("Nazwisko: ");
         var lastName = Console.ReadLine();
         
+        Console.Write("Pesel: ");
+        var pesel = Console.ReadLine();
+        
         Console.Write("Nazwa użytkownika: ");
         var username = Console.ReadLine();
         
@@ -37,6 +40,7 @@ public class RegistrationService : IRegistrationService
             employee = new Employee(
                 new HospitalManagementSystemUsername(username),
                 new HospitalManagementSystemPassword(password),
+                new HospitalManagementSystemPesel(pesel),
                 new HospitalManagementSystemId(_database.GetLastId() + 1),
                 new HospitalManagementSystemName(name),
                 new HospitalManagementSystemName(lastName),

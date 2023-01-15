@@ -10,4 +10,5 @@ public interface IShiftService
     void SetEmployee(Employee employee);
     void ShowDoctorShifts();
     void ShowEmployeeShifts();
+    void Run();
 }

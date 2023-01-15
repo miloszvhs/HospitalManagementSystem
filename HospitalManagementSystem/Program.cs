@@ -9,15 +9,16 @@ internal class Program
     public static void Main()
     {
         IPasswordHasherService passwordService = new PasswordHasherService();
+        IMenuActionService menuService = new MenuActionService();
+
         IDatabaseService databaseService = new DatabaseService(passwordService);
 
         databaseService.RestoreFromXmlFile();
         
-        IShiftService shiftService = new ShiftService(databaseService);
+        IShiftService shiftService = new ShiftService(databaseService, menuService);
         IPWZNumberService pwzNumberService = new PWZNumberService(databaseService);
         IRegistrationService registrationService = new RegistrationService(databaseService, passwordService);
         ILoginService loginService = new LoginService(databaseService, passwordService);
-        IMenuActionService menuService = new MenuActionService();
 
         while (true)
         {
@@ -42,7 +43,7 @@ internal class Program
                                     passwordService,
                                     pwzNumberService,
                                     employee);
-
+                                shiftService.SetEmployee(employee);
                                 adminOperations.Run();
                                 break;
                             case Role.Lekarz:
@@ -51,6 +52,7 @@ internal class Program
                                     pwzNumberService,
                                     shiftService,
                                     employee);
+                                shiftService.SetEmployee(employee);
                                 doctorOperations.Run();
                                 break;
                             case Role.Pracownik:
@@ -58,6 +60,7 @@ internal class Program
                                     menuService,
                                     shiftService,
                                     employee);
+                                shiftService.SetEmployee(employee);
                                 employeeOperations.Run();
                                 break;
                             default:

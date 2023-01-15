@@ -39,7 +39,15 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
 
     public int UpdateEmployee(Employee employee)
     {
-        throw new NotImplementedException();
+        var user = GetUser(employee.Id);
+
+        if (user is not null)
+        {
+            UpdateUser(employee);
+            return employee.Id;
+        }
+
+        return 0;
     }
 
     public int RemoveEmployee(int id)
@@ -48,7 +56,8 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
 
         if (user is not null)
         {
-            return 1;
+            RemoveUser(user);
+            return user.Id;
         }
 
         return 0;
@@ -76,6 +85,7 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
     {
         AddUser(new Employee(new HospitalManagementSystemUsername("Admin"),
             new HospitalManagementSystemPassword(_passwordHasherService.HashPassword("Admin")),
+            new HospitalManagementSystemPesel("12345678910"),
             new HospitalManagementSystemId(1),
             new HospitalManagementSystemName("Admin"),
             new HospitalManagementSystemName("Admin"),
@@ -122,7 +132,7 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
         {
             cfg.CreateMap<EmployeeDTO, Employee>()
                 .ConstructUsing((EmployeeDTO src) => new Employee(src.Username,
-                    new HospitalManagementSystemPassword(src.Password), src.Id, src.Name, src.LastName, src.Role));
+                    new HospitalManagementSystemPassword(src.Password), src.Pesel, src.Id, src.Name, src.LastName, src.Role));
             cfg.CreateMap<DoctorPrivilegesDTO, DoctorPrivileges>()
                 .ForMember(x => x.Pwz, s => s.MapFrom(d => new HospitalManagementSystemPWZ(d.Pwz)))
                 .ForMember(x => x.Specjalizacja, s => s.MapFrom(d => d.Specjalizacja));
@@ -136,6 +146,7 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
             cfg.CreateMap<Employee, EmployeeDTO>()
                 .ForMember(x => x.Name, s => s.MapFrom(d => d.Name.Value))
                 .ForMember(x => x.Password, s => s.MapFrom(d => d.Password.Value))
+                .ForMember(x => x.Pesel, s => s.MapFrom(d => d.Pesel.Value))
                 .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
                 .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
                 .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola))
