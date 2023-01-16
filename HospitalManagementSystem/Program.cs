@@ -12,10 +12,11 @@ internal class Program
         IMenuActionService menuService = new MenuActionService();
 
         IDatabaseService databaseService = new DatabaseService(passwordService);
+        IShiftDatabaseService shiftDatabaseService = new ShiftDatabaseService();
 
         databaseService.RestoreFromXmlFile();
         
-        IShiftService shiftService = new ShiftService(databaseService, menuService);
+        IShiftService shiftService = new ShiftService(shiftDatabaseService, menuService);
         IPWZNumberService pwzNumberService = new PWZNumberService(databaseService);
         IRegistrationService registrationService = new RegistrationService(databaseService, passwordService);
         ILoginService loginService = new LoginService(databaseService, passwordService);

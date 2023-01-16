@@ -4,41 +4,41 @@ namespace HospitalManagementSystem.Shared.Abstractions;
 
 public abstract class HospitalManagementSystemBaseDb<T> where T : BaseEntity
 {
-    public List<T> Users { get; set; } = new();
+    public List<T> Items { get; set; } = new();
 
-    public void AddUser(T user) => Users.Add(user);
+    public void Add(T item) => Items.Add(item);
     
-    public void UpdateUser(T user)
+    public void Update(T item)
     {
-        var entity = Users.FirstOrDefault(x => x.Id == user.Id);
+        var entity = Items.FirstOrDefault(x => x.Id == item.Id);
 
         if (entity is not null)
         {
-            entity = user;
+            UpdateObject(entity, item);
         }
     }
 
-    public void RemoveUser(T user)
+    public void Remove(T item)
     {
-        var entity = Users.FirstOrDefault(x => x.Id == user.Id);
+        var entity = Items.FirstOrDefault(x => x.Id == item.Id);
 
         if (entity is not null)
         {
-            Users.Remove(entity);
+            Items.Remove(entity);
         }
         else
         {
-            throw new CannotFindUserException(user.Id);
+            throw new CannotFindUserException(item.Id);
         }
     }
 
-    public T GetUser(int id)
+    public T Get(int id)
     {
-        var user = Users.FirstOrDefault(x => x.Id == id);
+        var entity = Items.FirstOrDefault(x => x.Id == id);
         
-        if(user is not null)
+        if(entity is not null)
         {
-            return user;
+            return entity;
         }
 
         return null;
@@ -46,12 +46,24 @@ public abstract class HospitalManagementSystemBaseDb<T> where T : BaseEntity
 
     public int GetLastId()
     {
-        if (Users.Any())
+        if (Items.Any())
         {
-            var id = Users.OrderBy(x => x.Id).LastOrDefault().Id;
+            var id = Items.OrderBy(x => x.Id).LastOrDefault().Id;
             return id;   
         }
 
         return 1;
+    }
+        
+    private void UpdateObject(object oldObject, object newObject)
+    {
+        var type = oldObject.GetType();
+        var fields = type.GetProperties();
+        
+        foreach (var field in fields)
+        {
+            var newValue = field.GetValue(newObject);
+            field.SetValue(oldObject, newValue);
+        }
     }
 }

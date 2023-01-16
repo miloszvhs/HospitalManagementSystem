@@ -55,7 +55,7 @@ public class DoctorOperations
     {
         Console.Write("Numer\tId\tTyp\t\tImie\t\tPWZ\tSpecjalizacja\n");
 
-        foreach (var (user, index) in _database.Users.Select((x, y) => (x, y + 1)))
+        foreach (var (user, index) in _database.Items.Select((x, y) => (x, y + 1)))
         {
             switch (user.Rola)
             {

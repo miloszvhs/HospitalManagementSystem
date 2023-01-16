@@ -50,6 +50,6 @@ public class EmployeeOperations
 
     private void ShowUsers()
     {
-        throw new NotImplementedException();
+        
     }
 }

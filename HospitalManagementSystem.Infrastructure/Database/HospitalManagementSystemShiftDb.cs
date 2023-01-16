@@ -3,6 +3,6 @@ using HospitalManagementSystem.Shared.Abstractions;
 
 namespace HospitalManagementSystem.Infrastructure.Database;
 
-public class HospitalManagementSystemDb : HospitalManagementSystemBaseDb<Employee>
+public class HospitalManagementSystemShiftDb : HospitalManagementSystemBaseDb<Shift>
 {
 }

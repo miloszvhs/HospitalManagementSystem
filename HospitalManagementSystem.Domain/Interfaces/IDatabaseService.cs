@@ -4,7 +4,7 @@ namespace HospitalManagementSystem.Domain.Interfaces;
 
 public interface IDatabaseService
 {
-    List<Employee> Users { get; set; }
+    List<Employee> Items { get; set; }
     void RestoreFromXmlFile();
     void SaveToXmlFile();
     void AddEmployee(Employee employee);

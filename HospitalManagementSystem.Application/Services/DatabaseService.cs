@@ -34,20 +34,20 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
 
     public void AddEmployee(Employee employee)
     {
-        AddUser(employee);
+        Add(employee);
     }
 
     public int UpdateEmployee(Employee employee)
     {
-        var user = GetUser(employee.Id);
+        var entity = GetUser(employee.Id);
 
-        if (user is not null)
+        if (entity is not null)
         {
-            UpdateUser(employee);
+            Update(employee);
             return employee.Id;
         }
 
-        return 0;
+        return -1;
     }
 
     public int RemoveEmployee(int id)
@@ -56,7 +56,7 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
 
         if (user is not null)
         {
-            RemoveUser(user);
+            Remove(user);
             return user.Id;
         }
 
@@ -65,7 +65,7 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
 
     public Employee GetEmployee(int id)
     {
-        var employee = Users.FirstOrDefault(x => x.Id == id);
+        var employee = Items.FirstOrDefault(x => x.Id == id);
 
         if (employee is not null)
         {
@@ -83,7 +83,7 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
 
     public void Seed()
     {
-        AddUser(new Employee(new HospitalManagementSystemUsername("Admin"),
+        Add(new Employee(new HospitalManagementSystemUsername("Admin"),
             new HospitalManagementSystemPassword(_passwordHasherService.HashPassword("Admin")),
             new HospitalManagementSystemPesel("12345678910"),
             new HospitalManagementSystemId(1),
@@ -96,36 +96,10 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
 
     public Employee GetUser(int id)
     {
-        var user = base.GetUser(id);
+        var user = base.Get(id);
         return user;
     }
 
-    public int DeleteUser(int id)
-    {
-        var user = base.GetUser(id);
-
-        if (user is not null)
-        {
-            RemoveUser(user);
-            return 1;
-        }
-
-        return 0;
-    }
-
-    public int ChangeUser(Employee employee)
-    {
-        var user = GetUser(employee.Id);
-
-        if (user is not null)
-        {
-            user = employee;
-            return 1;
-        }
-
-        return 0;
-    }
-    
     private MapperConfiguration InitializeMapperConfigurationFromDTO()
     {
         return new MapperConfiguration(cfg =>

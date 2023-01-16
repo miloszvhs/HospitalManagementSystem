@@ -30,7 +30,7 @@ public class LoginService : ILoginService
 
         HospitalManagementSystemPassword userPassword = new(_passwordHasherService.HashPassword(passwordInput));
 
-        var employee = _database.Users.FirstOrDefault(x => x.Username == userLogin);
+        var employee = _database.Items.FirstOrDefault(x => x.Username == userLogin);
 
         try
         {
