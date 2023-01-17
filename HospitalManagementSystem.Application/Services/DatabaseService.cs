@@ -9,15 +9,15 @@ namespace HospitalManagementSystem.Application.Services;
 
 public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
 {
+    private readonly IPasswordHasherService _passwordHasherService;
     private readonly XMLService _xmlService;
-    private readonly IPasswordHasherService _passwordHasherService; 
-    
+
     public DatabaseService(IPasswordHasherService passwordHasherService)
     {
         _passwordHasherService = passwordHasherService;
         var mapperConfigurationForDTO = InitializeMapperConfigurationFromDTO();
         var mapperConfiguration = InitializeMapperConfiguration();
-        
+
         _xmlService = new XMLService(this, "employees.xml", "Employees", mapperConfigurationForDTO,
             mapperConfiguration);
     }
@@ -67,10 +67,7 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
     {
         var employee = Items.FirstOrDefault(x => x.Id == id);
 
-        if (employee is not null)
-        {
-            return employee;
-        }
+        if (employee is not null) return employee;
 
         return null;
     }
@@ -90,13 +87,13 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
             new HospitalManagementSystemName("Admin"),
             new HospitalManagementSystemName("Admin"),
             Role.Administrator));
-        
+
         _xmlService.SaveToXmlFile();
     }
 
     public Employee GetUser(int id)
     {
-        var user = base.Get(id);
+        var user = Get(id);
         return user;
     }
 
@@ -105,8 +102,9 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
         return new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<EmployeeDTO, Employee>()
-                .ConstructUsing((EmployeeDTO src) => new Employee(src.Username,
-                    new HospitalManagementSystemPassword(src.Password), src.Pesel, src.Id, src.Name, src.LastName, src.Role));
+                .ConstructUsing(src => new Employee(src.Username,
+                    new HospitalManagementSystemPassword(src.Password), src.Pesel, src.Id, src.Name, src.LastName,
+                    src.Role));
             cfg.CreateMap<DoctorPrivilegesDTO, DoctorPrivileges>()
                 .ForMember(x => x.Pwz, s => s.MapFrom(d => new HospitalManagementSystemPWZ(d.Pwz)))
                 .ForMember(x => x.Specjalizacja, s => s.MapFrom(d => d.Specjalizacja));

@@ -1,5 +1,4 @@
-﻿using HospitalManagementSystem.Application.Services;
-using HospitalManagementSystem.Domain.Entities;
+﻿using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Interfaces;
 
 namespace HospitalManagementSystem.Application.Operations;
@@ -7,15 +6,15 @@ namespace HospitalManagementSystem.Application.Operations;
 public class DoctorOperations
 {
     private readonly IDatabaseService _database;
+    private readonly Employee _employee;
     private readonly IMenuActionService _menuActionService;
     private readonly IPWZNumberService _pwzNumberService;
     private readonly IShiftService _shiftService;
-    private readonly Employee _employee;
 
     public DoctorOperations(IDatabaseService database,
         IMenuActionService menuActionService,
         IPWZNumberService pwzNumberService,
-        IShiftService shiftService, 
+        IShiftService shiftService,
         Employee employee)
     {
         _database = database;
@@ -56,7 +55,6 @@ public class DoctorOperations
         Console.Write("Numer\tId\tTyp\t\tImie\t\tPWZ\tSpecjalizacja\n");
 
         foreach (var (user, index) in _database.Items.Select((x, y) => (x, y + 1)))
-        {
             switch (user.Rola)
             {
                 case Role.Lekarz:
@@ -68,6 +66,5 @@ public class DoctorOperations
                         $"{index}.\t{user.Id}\t{user.Rola}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
                     break;
             }
-        }
     }
 }

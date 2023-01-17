@@ -17,7 +17,7 @@ internal class Program
         databaseService.RestoreFromXmlFile();
         shiftDatabaseService.RestoreFromXmlFile();
         
-        IShiftService shiftService = new ShiftService(shiftDatabaseService, menuService);
+        IShiftService shiftService = new ShiftService(shiftDatabaseService, menuService, databaseService);
         IPWZNumberService pwzNumberService = new PWZNumberService(databaseService);
         IRegistrationService registrationService = new RegistrationService(databaseService, passwordService);
         ILoginService loginService = new LoginService(databaseService, passwordService);

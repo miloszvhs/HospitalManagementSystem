@@ -1,5 +1,4 @@
-﻿using HospitalManagementSystem.Application.Services;
-using HospitalManagementSystem.Domain.Entities;
+﻿using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Interfaces;
 
 namespace HospitalManagementSystem.Application.Operations;
@@ -7,12 +6,12 @@ namespace HospitalManagementSystem.Application.Operations;
 public class EmployeeOperations
 {
     private readonly IDatabaseService _database;
+    private readonly Employee _employee;
     private readonly IMenuActionService _menuActionService;
     private readonly IShiftService _shiftService;
-    private readonly Employee _employee;
 
-    public EmployeeOperations(IDatabaseService database, 
-        IMenuActionService menuActionService, 
+    public EmployeeOperations(IDatabaseService database,
+        IMenuActionService menuActionService,
         IShiftService shiftService,
         Employee employee)
     {
@@ -50,6 +49,5 @@ public class EmployeeOperations
 
     private void ShowUsers()
     {
-        
     }
 }

@@ -1,125 +1,137 @@
-﻿using AutoMapper;
-using HospitalManagementSystem.Application.DTOModels;
-using HospitalManagementSystem.Domain.Entities;
+﻿using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Interfaces;
-using HospitalManagementSystem.Domain.ValueObjects;
 
 namespace HospitalManagementSystem.Application.Services;
 
 public class ShiftService : IShiftService
 {
-    private Employee actuallEmployee { get; set; }
-    private readonly IShiftDatabaseService _database;
+    private readonly IShiftDatabaseService _shiftDatabase;
+    private readonly IDatabaseService _database;
     private readonly IMenuActionService _menuActionService;
 
-    public ShiftService(IShiftDatabaseService database, 
-        IMenuActionService menuActionService)
+    public ShiftService(IShiftDatabaseService shiftDatabase,
+        IMenuActionService menuActionService,
+        IDatabaseService database)
     {
-        _database = database;
+        _shiftDatabase = shiftDatabase;
         _menuActionService = menuActionService;
+        _database = database;
     }
-    
+
+    private Employee actuallEmployee { get; set; }
+
     public void ShowDoctorShifts()
     {
-        foreach (var shift in _database.Items.Where(x => x.Date >= DateTime.Now))
+        foreach (var shift in _shiftDatabase.Items.Where(x => x.Date >= DateTime.Now))
         {
+            Console.WriteLine("Id\tNazwa uzytkownika\tImie\tNazwisko\tSpecjalizacja");
             foreach (var doctor in shift.Users.Where(x => x.Rola == Role.Lekarz))
-            {
-                if (doctor.Username == actuallEmployee.Username)
-                {
-                    Console.WriteLine($"{doctor.Id}. {doctor.Username.Value} {doctor.DoctorPrivileges.Specjalizacja}");
-                }
-            }
+                Console.WriteLine($"{doctor.Id}.\t{doctor.Username.Value}\t{doctor.Name.Value}\t{doctor.LastName.Value}\t{doctor.DoctorPrivileges.Specjalizacja}");
         }
     }
 
     public void ShowEmployeeShifts()
     {
-        foreach (var shift in _database.Items.Where(x => x.Date >= DateTime.Now))
+        foreach (var shift in _shiftDatabase.Items.Where(x => x.Date >= DateTime.Now))
         {
             Console.WriteLine($"{shift.Date}");
+            Console.WriteLine("Id\tNazwa uzytkownika\tImie\tNazwisko");
             foreach (var doctor in shift.Users.Where(x => x.Rola == Role.Pracownik))
-            {
-                Console.WriteLine($"{doctor.Id}. {doctor.Username.Value}");
-            } 
-        }
-    }
-    
-    public void ShowAllShifts()
-    {
-        if (_database.Items.Any())
-        {
-            foreach (var shift in _database.Items.Where(x => x.Date >= DateTime.Now))
-            {
-                Console.WriteLine($"{shift.Date}");
-                foreach (var employee in shift.Users)
-                {
-                    Console.WriteLine($"{employee.Id}. {employee.Username.Value} {employee.DoctorPrivileges?.Specjalizacja}");
-                }
-            }    
+                Console.WriteLine($"{doctor.Id}.\t{doctor.Username.Value}\t{doctor.Name.Value}\t{doctor.LastName.Value}");
         }
     }
 
+    public void ShowAllShifts()
+    {
+        if (_shiftDatabase.Items.Any())
+            foreach (var shift in _shiftDatabase.Items.Where(x => x.Date >= DateTime.Now))
+            {
+                Console.WriteLine($"{shift.Date}");
+                Console.WriteLine("Id\tNazwa uzytkownika\tImie\tNazwisko\tSpecjalizacja");
+                foreach (var employee in shift.Users)
+                    Console.WriteLine(
+                        $"{employee.Id}.\t{employee.Username.Value}\t\t\t{employee.Name.Value}\t{employee.LastName.Value}\t{employee.DoctorPrivileges?.Specjalizacja}");
+            }
+    }
+    
     public void Run()
     {
         while (true)
-        {   
-            _menuActionService.DrawMenuViewByMenuType("Shifts");
-            
-            var input = Console.ReadKey();
-            Console.WriteLine();
-
-            switch (input.KeyChar)
+        {
+            switch (actuallEmployee.Rola)
             {
-                case '1':
-                    switch (actuallEmployee.Rola)
+                case Role.Administrator:
+                    _menuActionService.DrawMenuViewByMenuType("ShiftsForAdministrator");
+                    
+                    var input = Console.ReadKey();
+                    Console.WriteLine();
+
+                    switch (input.KeyChar)
                     {
-                        case Role.Administrator:
+                        case '1':
                             ShowAllShifts();
                             break;
-                        case Role.Lekarz:
-                            ShowDoctorShifts();
+                        case '2':
+                            DateTime date;
+                            
+                            Console.Write("Podaj ID użytkownika, którego chcesz dodać: ");
+                            try
+                            {
+                                var id = int.Parse(Console.ReadLine());
+                                var user = _database.GetEmployee(id);
+                            
+                                Console.Write("Podaj date dyżuru w formacie DD/MM/YYYY lub DD-MM-YYYY:");
+                                date = ParseDate(Console.ReadLine());
+
+                                AddShift(date, user);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
                             break;
-                        case Role.Pracownik:
-                            ShowEmployeeShifts();
+                        case '3':
+                            Console.Write("Podaj date w formacie DD/MM/YYYY lub DD-MM-YYYY:");
+                            date = ParseDate(Console.ReadLine());
+
+                            RemoveShift(date, actuallEmployee);
                             break;
+                        case '4':
+                            return;
                     }
                     break;
-                case '2':
-                    Console.Write("Podaj date w formacie DD/MM/YYYY lub DD-MM-YYYY:");
-                    var date = ParseDate(Console.ReadLine());
-
-                    AddShift(date, actuallEmployee);
-                    break;
-                case '3':
-                    Console.Write("Podaj date w formacie DD/MM/YYYY lub DD-MM-YYYY:");
-                    date = ParseDate(Console.ReadLine());
-
-                    RemoveShift(date, actuallEmployee);
-                    break;
-                case '4':
-                    return;
                 default:
+                    _menuActionService.DrawMenuViewByMenuType("ShiftsForOthers");
+                    input = Console.ReadKey();
+                    Console.WriteLine();
+
+                    switch (input.KeyChar)
+                    {
+                        case '1':
+                            ShowAllShifts();
+                            break;
+                        case '2':
+                            return;
+                    }
                     break;
             }
-            
         }
     }
 
     public int RemoveShift(DateTime date, Employee employee)
     {
-        var shift = _database.Items.Find(x => x.Date.Date == date.Date && x.Users.Contains(employee));
-        
-        if(shift is not null)
+        var shift = _shiftDatabase.Items.Find(x => x.Date.Date == date.Date && x.Users.Contains(employee));
+
+        if (shift is not null)
         {
             shift.Users.Remove(employee);
-            
-            if(!shift.Users.Any())
+
+            if (!shift.Users.Any())
             {
-                _database.Items.Remove(shift);
-                _database.SaveToXmlFile();
+                _shiftDatabase.RemoveShift(shift.Id);
+                _shiftDatabase.SaveToXmlFile();
             }
-            
+
             return employee.Id;
         }
 
@@ -138,7 +150,7 @@ public class ShiftService : IShiftService
 
     public int AddShift(DateTime date, Employee employee)
     {
-        var shift = _database.Items.Find(x => x.Date.Date == date.Date);
+        var shift = _shiftDatabase.Items.Find(x => x.Date.Date == date.Date);
         date = date.Date;
 
         try
@@ -147,46 +159,62 @@ public class ShiftService : IShiftService
             {
                 if (!CheckIfEmployeeHasLessThanTenShiftsInMonth(actuallEmployee))
                 {
-                    throw new Exception("Nie można dodać dyżuru, gdyż użytkownik ma już aktualnie zajętych 10 dyżurów w tym miesiącu.");
+                    throw new Exception(
+                        "Nie można dodać dyżuru, gdyż użytkownik ma już aktualnie zajętych 10 dyżurów w tym miesiącu.");
                 }
-                
+
+                if(CheckIfEmployeeHasShiftOneDayBehind(date, employee) &&
+                 CheckIfEmployeeHasShiftOneDayForward(date, employee))
+                {
+                    throw new Exception("Nie można dodać dyżuru, gdyż dany użytkownik posiada już dyżur dzień przed lub dzień po.");
+                }
+                    
                 var user = shift.Users.FirstOrDefault(x => x.Id == employee.Id);
 
                 if (user is not null)
                 {
                     throw new Exception("Nie można dodać dyżuru, gdyż dyżur w danym dniu już istnieje.");
                 }
-                else
+
+                if (employee.Rola == Role.Lekarz)
                 {
-                    if(employee.Rola == Role.Lekarz)
-                    {
-                        var doctorWithSameSpecialization = shift.Users.Find(x => x.DoctorPrivileges.Specjalizacja == employee.DoctorPrivileges.Specjalizacja);
-                        if (doctorWithSameSpecialization is not null)
-                        {
-                            throw new Exception(
-                                "Nie można dodać dyżuru, gdyż tego dnia dyżur ma już inny lekarz z tą samą specjalizacją.");
-                        }
-                    }
-                    shift.Users.Add(employee);
-                    return employee.Id;
+                    var doctorWithSameSpecialization = shift.Users.Where(x => x.DoctorPrivileges is not null)
+                        .ToList()
+                        .Find(x => x.DoctorPrivileges.Specjalizacja == employee.DoctorPrivileges.Specjalizacja);
+                    if (doctorWithSameSpecialization is not null)
+                        throw new Exception(
+                            "Nie można dodać dyżuru, gdyż tego dnia dyżur ma już inny lekarz z tą samą specjalizacją.");
                 }
+
+                shift.Users.Add(employee);
+                return employee.Id;
             }
             else
             {
-                if (!(CheckIfEmployeeHasShiftOneDayBehind(date, employee)) &&
-                    !(CheckIfEmployeeHasShiftOneDayForward(date, employee)))
+                if (!CheckIfEmployeeHasLessThanTenShiftsInMonth(actuallEmployee))
                 {
-                    if(!CheckIfDateIsBeforeActuallDate(date))
-                    {
-                        throw new Exception("Nie można dodać dyżuru, gdyż wybrana data jest wcześniej niż aktualna.");
-                    }
-                    
-                    var newShift = new Shift(date) { Users = { actuallEmployee } };
-                    _database.AddShift(newShift);;
-                    _database.SaveToXmlFile();
-                    Console.WriteLine("Dodano dyżur.");
-                    return employee.Id;
+                    throw new Exception(
+                        "Nie można dodać dyżuru, gdyż użytkownik ma już aktualnie zajętych 10 dyżurów w tym miesiącu.");
                 }
+
+                if (!CheckIfDateIsBeforeActuallDate(date))
+                {
+                    throw new Exception("Nie można dodać dyżuru, gdyż wybrana data jest wcześniej niż aktualna.");
+                }
+                
+                if (CheckIfEmployeeHasShiftOneDayBehind(date, employee) ||
+                    CheckIfEmployeeHasShiftOneDayForward(date, employee))
+                {
+                    throw new Exception("Nie można dodać dyżuru, gdyż dany użytkownik posiada już dyżur dzień przed lub dzień po.");
+
+                }
+                
+                var newShift = new Shift(date) { Users = { actuallEmployee } };
+                _shiftDatabase.AddShift(newShift);
+                _shiftDatabase.SaveToXmlFile();
+                
+                Console.WriteLine("Dodano dyżur.");
+                return employee.Id;
             }
         }
         catch (Exception e)
@@ -199,36 +227,31 @@ public class ShiftService : IShiftService
 
     private bool CheckIfEmployeeHasShiftOneDayForward(DateTime date, Employee employee)
     {
-        var shiftExist = _database.Items.Exists(x => x.Date.Date == date.AddDays(1).Date && x.Users.Contains(employee));
+        var shiftExist = _shiftDatabase.Items.Exists(x => x.Date.Date == date.AddDays(1).Date && x.Users.Contains(employee));
         return shiftExist;
     }
 
     private bool CheckIfEmployeeHasShiftOneDayBehind(DateTime date, Employee employee)
     {
-        var shiftExist = _database.Items.Exists(x => x.Date.Date == date.AddDays(-1).Date && x.Users.Contains(employee));
+        var shiftExist =
+            _shiftDatabase.Items.Exists(x => x.Date.Date == date.AddDays(-1).Date && x.Users.Contains(employee));
         return shiftExist;
     }
 
     private bool CheckIfEmployeeHasLessThanTenShiftsInMonth(Employee employee)
     {
-        var count = _database.Items
+        var count = _shiftDatabase.Items
             .Where(x => x.Date.Month == DateTime.Now.Month)
             .Count(x => x.Users.Contains(employee));
 
-        if (count <= 10)
-        {
-            return true;
-        }
+        if (count < 10) return true;
 
         return false;
     }
 
     private bool CheckIfDateIsBeforeActuallDate(DateTime date)
     {
-        if(date.Date >= DateTime.Now.Date)
-        {
-            return true;
-        }
+        if (date.Date >= DateTime.Now.Date) return true;
 
         return false;
     }
@@ -239,10 +262,7 @@ public class ShiftService : IShiftService
 
         try
         {
-            if (!DateTime.TryParse(text, out date))
-            {
-                throw new Exception($"Cannot parse {text} to date.");
-            }
+            if (!DateTime.TryParse(text, out date)) throw new Exception($"Cannot parse {text} to date.");
 
             return date;
         }

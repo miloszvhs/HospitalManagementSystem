@@ -1,5 +1,4 @@
-﻿using HospitalManagementSystem.Application.Services;
-using HospitalManagementSystem.Domain.Entities;
+﻿using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Interfaces;
 using HospitalManagementSystem.Domain.ValueObjects;
 
@@ -8,17 +7,17 @@ namespace HospitalManagementSystem.Application.Operations;
 public class AdminOperations
 {
     private readonly IDatabaseService _database;
+    private readonly Employee _employee;
     private readonly IMenuActionService _menuActionService;
     private readonly IPasswordHasherService _passwordHasherService;
     private readonly IPWZNumberService _pwzNumberService;
     private readonly IShiftService _shiftService;
-    private readonly Employee _employee;
 
     public AdminOperations(IMenuActionService menuActionService,
         IDatabaseService database,
         IShiftService shiftService,
         IPasswordHasherService passwordHasherService,
-        IPWZNumberService pwzNumberService, 
+        IPWZNumberService pwzNumberService,
         Employee employee)
     {
         _menuActionService = menuActionService;
@@ -68,7 +67,6 @@ public class AdminOperations
     {
         Console.Write("Podaj ID użytkownika, którego chcesz zmienić: ");
         var userId = CheckStringAndConvertToInt(Console.ReadLine());
-
     }
 
     private void DeleteUser()
@@ -83,19 +81,19 @@ public class AdminOperations
     {
         Console.Write("Imię: ");
         var name = Console.ReadLine();
-        
+
         Console.Write("Nazwisko: ");
         var lastName = Console.ReadLine();
-        
+
         Console.Write("Nazwa użytkownika: ");
         var username = Console.ReadLine();
-        
+
         Console.Write("Pesel: ");
         var pesel = Console.ReadLine();
-        
+
         Console.Write("Hasło: ");
         var password = _passwordHasherService.HashPassword(Console.ReadLine());
-        
+
         _menuActionService.DrawMenuViewByMenuType("Roles");
         Console.Write("Rola: ");
         var role = Console.ReadLine();
@@ -136,8 +134,8 @@ public class AdminOperations
                         new HospitalManagementSystemName(lastName),
                         Role.Lekarz,
                         new DoctorPrivileges(new HospitalManagementSystemPWZ(_pwzNumberService.GetNewPWZ().ToString()),
-                        userSpecialization)
-                        ));
+                            userSpecialization)
+                    ));
                     _database.SaveToXmlFile();
                     break;
                 case "2":
@@ -166,7 +164,6 @@ public class AdminOperations
         Console.Write("Numer\tId\tTyp\t\tImie\t\tPWZ\tSpecjalizacja\n");
 
         foreach (var (user, index) in _database.Items.Select((x, y) => (x, y + 1)))
-        {
             switch (user.Rola)
             {
                 case Role.Administrator:
@@ -182,20 +179,15 @@ public class AdminOperations
                         $"{index}.\t{user.Id}\t{user.Rola}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
                     break;
             }
-        }
     }
 
     private int CheckStringAndConvertToInt(string text)
     {
-        int result = 0;
+        var result = 0;
 
-        
         try
         {
-            if (!int.TryParse(text, out result))
-            {
-                throw new Exception($"Cannot parse {text} to int.");
-            }
+            if (!int.TryParse(text, out result)) throw new Exception($"Cannot parse {text} to int.");
         }
         catch (Exception e)
         {

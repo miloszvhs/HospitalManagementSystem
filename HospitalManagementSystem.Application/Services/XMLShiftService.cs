@@ -10,12 +10,9 @@ namespace HospitalManagementSystem.Application.Services;
 public class XMLShiftService
 {
     private readonly IShiftDatabaseService _database;
-    private readonly MapperConfiguration _mapperConfigurationForDTO;
     private readonly MapperConfiguration _mapperConfiguration;
+    private readonly MapperConfiguration _mapperConfigurationForDTO;
 
-    private string path { get; }
-    private string elementName { get; }
-    
     public XMLShiftService(IShiftDatabaseService database, string path, string elementName,
         MapperConfiguration mapperConfigurationForDTO,
         MapperConfiguration mapperConfiguration)
@@ -26,6 +23,9 @@ public class XMLShiftService
         _mapperConfigurationForDTO = mapperConfigurationForDTO;
         _mapperConfiguration = mapperConfiguration;
     }
+
+    private string path { get; }
+    private string elementName { get; }
 
     public void RestoreFromXmlFile()
     {
@@ -59,14 +59,14 @@ public class XMLShiftService
         var shifts = _database.Items;
         var mapper = new Mapper(_mapperConfiguration);
         var shiftsDTO = mapper.Map<List<ShiftDTO>>(shifts);
-        
+
         XmlRootAttribute root = new();
         root.ElementName = elementName;
         root.IsNullable = true;
         XmlSerializer serializer = new(typeof(List<ShiftDTO>), root);
 
         using StreamWriter sw = new(path);
-        using XmlWriter xmlWriter = XmlWriter.Create(sw, new XmlWriterSettings() { Indent = true }); 
+        using var xmlWriter = XmlWriter.Create(sw, new XmlWriterSettings { Indent = true });
         serializer.Serialize(xmlWriter, shiftsDTO);
     }
 }

@@ -10,16 +10,16 @@ namespace HospitalManagementSystem.Application.Services;
 public class ShiftDatabaseService : HospitalManagementSystemShiftDb, IShiftDatabaseService
 {
     private readonly XMLShiftService _xmlShiftService;
-    
+
     public ShiftDatabaseService()
     {
         var mapperConfigurationForDTO = MapperConfigurationFromDTO();
         var mapperConfiguration = MapperConfiguration();
-        
-        _xmlShiftService = new XMLShiftService(this, "shift.xml", "Shifts", mapperConfigurationForDTO,
+
+        _xmlShiftService = new XMLShiftService(this, "shifts.xml", "Shifts", mapperConfigurationForDTO,
             mapperConfiguration);
     }
-    
+
     public void RestoreFromXmlFile()
     {
         _xmlShiftService.RestoreFromXmlFile();
@@ -65,14 +65,11 @@ public class ShiftDatabaseService : HospitalManagementSystemShiftDb, IShiftDatab
     {
         var shift = Items.FirstOrDefault(x => x.Id == id);
 
-        if (shift is not null)
-        {
-            return shift;
-        }
+        if (shift is not null) return shift;
 
         return null;
     }
-    
+
     private bool CheckIfEmployeeHasShiftOneDayForward(DateTime date, Employee employee)
     {
         var shiftExist = Items.Exists(x => x.Date.Date == date.AddDays(1).Date && x.Users.Contains(employee));
@@ -91,20 +88,14 @@ public class ShiftDatabaseService : HospitalManagementSystemShiftDb, IShiftDatab
             .Where(x => x.Date.Month == DateTime.Now.Month)
             .Count(x => x.Users.Contains(employee));
 
-        if (count <= 10)
-        {
-            return true;
-        }
+        if (count <= 10) return true;
 
         return false;
     }
 
     private bool CheckIfDateIsBeforeActuallDate(DateTime date)
     {
-        if(date.Date >= DateTime.Now.Date)
-        {
-            return true;
-        }
+        if (date.Date >= DateTime.Now.Date) return true;
 
         return false;
     }
@@ -115,10 +106,7 @@ public class ShiftDatabaseService : HospitalManagementSystemShiftDb, IShiftDatab
 
         try
         {
-            if (!DateTime.TryParse(text, out date))
-            {
-                throw new Exception($"Cannot parse {text} to date.");
-            }
+            if (!DateTime.TryParse(text, out date)) throw new Exception($"Cannot parse {text} to date.");
 
             return date;
         }
@@ -129,7 +117,7 @@ public class ShiftDatabaseService : HospitalManagementSystemShiftDb, IShiftDatab
 
         return default;
     }
-    
+
     private MapperConfiguration MapperConfigurationFromDTO()
     {
         return new MapperConfiguration(cfg =>
@@ -138,8 +126,9 @@ public class ShiftDatabaseService : HospitalManagementSystemShiftDb, IShiftDatab
                 .ForMember(x => x.Date, s => s.MapFrom(d => d.Date))
                 .ForMember(x => x.Users, s => s.MapFrom(d => d.Users));
             cfg.CreateMap<EmployeeDTO, Employee>()
-                .ConstructUsing((EmployeeDTO src) => new Employee(src.Username,
-                    new HospitalManagementSystemPassword(src.Password), src.Pesel, src.Id, src.Name, src.LastName, src.Role));
+                .ConstructUsing(src => new Employee(src.Username,
+                    new HospitalManagementSystemPassword(src.Password), src.Pesel, src.Id, src.Name, src.LastName,
+                    src.Role));
             cfg.CreateMap<DoctorPrivilegesDTO, DoctorPrivileges>()
                 .ForMember(x => x.Pwz, s => s.MapFrom(d => new HospitalManagementSystemPWZ(d.Pwz)))
                 .ForMember(x => x.Specjalizacja, s => s.MapFrom(d => d.Specjalizacja));

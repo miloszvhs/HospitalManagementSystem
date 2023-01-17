@@ -1,5 +1,4 @@
-﻿using HospitalManagementSystem.Domain.Entities;
-using HospitalManagementSystem.Domain.Interfaces;
+﻿using HospitalManagementSystem.Domain.Interfaces;
 
 namespace HospitalManagementSystem.Application.Services;
 
@@ -22,7 +21,8 @@ public class PWZNumberService : IPWZNumberService
         {
             pwz = GeneratePWZ();
 
-            if (_database.Items.Where(x => x.DoctorPrivileges is not null).FirstOrDefault(x => x.DoctorPrivileges.Pwz == pwz) is null) break;
+            if (_database.Items.Where(x => x.DoctorPrivileges is not null)
+                    .FirstOrDefault(x => x.DoctorPrivileges.Pwz == pwz) is null) break;
         }
 
         return pwz;

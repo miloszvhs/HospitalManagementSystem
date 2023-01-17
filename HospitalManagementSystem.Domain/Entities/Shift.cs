@@ -7,6 +7,10 @@ public class Shift : BaseEntity
     public DateTime Date { get; }
     public List<Employee> Users { get; } = new();
 
+    public Shift()
+    {
+    }
+    
     public Shift(DateTime date)
     {
         Date = date;

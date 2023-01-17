@@ -15,7 +15,6 @@ public class LoginService : ILoginService
     {
         _passwordHasherService = passwordHasherService;
         _database = database;
-
     }
 
     public Employee Login()

@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Serialization;
 using AutoMapper;
 using HospitalManagementSystem.Application.DTOModels;
@@ -11,12 +10,9 @@ namespace HospitalManagementSystem.Application.Services;
 public class XMLService
 {
     private readonly IDatabaseService _database;
-    private readonly MapperConfiguration _mapperConfigurationForDTO;
     private readonly MapperConfiguration _mapperConfiguration;
+    private readonly MapperConfiguration _mapperConfigurationForDTO;
 
-    private string path { get; }
-    private string elementName { get; }
-    
     public XMLService(IDatabaseService database, string path, string elementName,
         MapperConfiguration mapperConfigurationForDTO,
         MapperConfiguration mapperConfiguration)
@@ -27,6 +23,9 @@ public class XMLService
         _mapperConfigurationForDTO = mapperConfigurationForDTO;
         _mapperConfiguration = mapperConfiguration;
     }
+
+    private string path { get; }
+    private string elementName { get; }
 
     public void RestoreFromXmlFile()
     {
@@ -62,14 +61,14 @@ public class XMLService
         var employees = _database.Items;
         var mapper = new Mapper(_mapperConfiguration);
         var employeesDTO = mapper.Map<List<EmployeeDTO>>(employees);
-        
+
         XmlRootAttribute root = new();
         root.ElementName = elementName;
         root.IsNullable = true;
         XmlSerializer serializer = new(typeof(List<EmployeeDTO>), root);
 
         using StreamWriter sw = new(path);
-        using XmlWriter xmlWriter = XmlWriter.Create(sw, new XmlWriterSettings() { Indent = true }); 
+        using var xmlWriter = XmlWriter.Create(sw, new XmlWriterSettings { Indent = true });
         serializer.Serialize(xmlWriter, employeesDTO);
     }
 }

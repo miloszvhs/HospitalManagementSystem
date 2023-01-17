@@ -12,9 +12,4 @@ public class EmployeeDTO
     public byte[] Password { get; set; }
     public Role Role { get; set; }
     public DoctorPrivilegesDTO? DoctorPrivileges { get; set; }
-
-    public EmployeeDTO()
-    {
-        
-    }
 }

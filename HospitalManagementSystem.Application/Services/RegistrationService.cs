@@ -19,19 +19,19 @@ public class RegistrationService : IRegistrationService
     public Employee Register()
     {
         Employee employee;
-        
+
         Console.Write("Imię: ");
         var name = Console.ReadLine();
-        
+
         Console.Write("Nazwisko: ");
         var lastName = Console.ReadLine();
-        
+
         Console.Write("Pesel: ");
         var pesel = Console.ReadLine();
-        
+
         Console.Write("Nazwa użytkownika: ");
         var username = Console.ReadLine();
-        
+
         Console.Write("Hasło: ");
         var password = _passwordHasherService.HashPassword(Console.ReadLine());
 
