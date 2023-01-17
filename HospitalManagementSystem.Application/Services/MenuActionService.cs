@@ -43,7 +43,8 @@ public class MenuActionService : IMenuActionService
         _menuActions.Add(new MenuAction(1, "Pokaż dyżury", "ShiftsForAdministrator"));
         _menuActions.Add(new MenuAction(2, "Dodaj dyżur", "ShiftsForAdministrator"));
         _menuActions.Add(new MenuAction(3, "Usuń dyżur", "ShiftsForAdministrator"));
-        _menuActions.Add(new MenuAction(4, "Powrót", "ShiftsForAdministrator"));
+        _menuActions.Add(new MenuAction(4, "Zmień dyżur", "ShiftsForAdministrator"));
+        _menuActions.Add(new MenuAction(5, "Powrót", "ShiftsForAdministrator"));
         
         _menuActions.Add(new MenuAction(1, "Pokaż dyżury", "ShiftsForOthers"));
         _menuActions.Add(new MenuAction(2, "Powrót", "ShiftsForOthers"));

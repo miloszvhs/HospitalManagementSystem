@@ -45,6 +45,20 @@ public class RegistrationService : IRegistrationService
                 new HospitalManagementSystemName(name),
                 new HospitalManagementSystemName(lastName),
                 Role.Pracownik);
+            
+            if (_database.Items.Find(x => x.Pesel == employee.Pesel) != null)
+            {
+                throw new Exception("Użytkownik z takim peselem już istnieje.");
+            }
+                    
+            if(_database.Items.Find(x => x.Username == employee.Username) != null)
+            {
+                throw new Exception("Taki użytkownik już istnieje.");
+            }
+            
+            Console.WriteLine($"Pomyslnie stworzono pracownika {employee.Username.Value}");
+            _database.AddEmployee(employee);
+            _database.SaveToXmlFile();
         }
         catch (Exception e)
         {
@@ -52,9 +66,6 @@ public class RegistrationService : IRegistrationService
             return null;
         }
 
-        Console.WriteLine($"Pomyslnie stworzono pracownika {employee.Username.Value}");
-        _database.AddEmployee(employee);
-        _database.SaveToXmlFile();
         return employee;
     }
 }

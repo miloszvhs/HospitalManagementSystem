@@ -70,54 +70,6 @@ public class ShiftDatabaseService : HospitalManagementSystemShiftDb, IShiftDatab
         return null;
     }
 
-    private bool CheckIfEmployeeHasShiftOneDayForward(DateTime date, Employee employee)
-    {
-        var shiftExist = Items.Exists(x => x.Date.Date == date.AddDays(1).Date && x.Users.Contains(employee));
-        return shiftExist;
-    }
-
-    private bool CheckIfEmployeeHasShiftOneDayBehind(DateTime date, Employee employee)
-    {
-        var shiftExist = Items.Exists(x => x.Date.Date == date.AddDays(-1).Date && x.Users.Contains(employee));
-        return shiftExist;
-    }
-
-    private bool CheckIfEmployeeHasLessThanTenShiftsInMonth(Employee employee)
-    {
-        var count = Items
-            .Where(x => x.Date.Month == DateTime.Now.Month)
-            .Count(x => x.Users.Contains(employee));
-
-        if (count <= 10) return true;
-
-        return false;
-    }
-
-    private bool CheckIfDateIsBeforeActuallDate(DateTime date)
-    {
-        if (date.Date >= DateTime.Now.Date) return true;
-
-        return false;
-    }
-
-    private DateTime ParseDate(string text)
-    {
-        DateTime date;
-
-        try
-        {
-            if (!DateTime.TryParse(text, out date)) throw new Exception($"Cannot parse {text} to date.");
-
-            return date;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
-
-        return default;
-    }
-
     private MapperConfiguration MapperConfigurationFromDTO()
     {
         return new MapperConfiguration(cfg =>

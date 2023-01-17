@@ -1,6 +1,7 @@
 ﻿using HospitalManagementSystem.Domain.Entities;
 using HospitalManagementSystem.Domain.Interfaces;
 using HospitalManagementSystem.Domain.ValueObjects;
+using HospitalManagementSystem.Shared.Abstractions.Helpers;
 
 namespace HospitalManagementSystem.Application.Operations;
 
@@ -66,15 +67,177 @@ public class AdminOperations
     private void ChangeUser()
     {
         Console.Write("Podaj ID użytkownika, którego chcesz zmienić: ");
-        var userId = CheckStringAndConvertToInt(Console.ReadLine());
+        var userId = Helper.CheckStringAndConvertToInt(Console.ReadLine());
+
+        try
+        {
+            if(_database.GetEmployee(userId) == null)
+            {
+                throw new Exception("Użytkownik o takim ID nie istnieje.");
+            }
+            
+            if (userId != _employee.Id)
+            {
+                Console.Write("Imię: ");
+                var name = Console.ReadLine();
+
+                Console.Write("Nazwisko: ");
+                var lastName = Console.ReadLine();
+
+                Console.Write("Nazwa użytkownika: ");
+                var username = Console.ReadLine();
+
+                Console.Write("Pesel: ");
+                var pesel = Console.ReadLine();
+
+                Console.Write("Hasło: ");
+                var password = _passwordHasherService.HashPassword(Console.ReadLine());
+
+                _menuActionService.DrawMenuViewByMenuType("Roles");
+                Console.Write("Rola: ");
+                var role = Console.ReadLine();
+            
+                var user = _database.GetEmployee(userId);
+
+                if (user is not null)
+                {
+                    switch (role)
+                    {
+                        case "0":
+                            var index = _database.Items.FindIndex(x => x.Id == user.Id);
+
+                            var employee = new Employee(new HospitalManagementSystemUsername(username),
+                                new HospitalManagementSystemPassword(password),
+                                new HospitalManagementSystemPesel(pesel),
+                                new HospitalManagementSystemId(userId),
+                                new HospitalManagementSystemName(name),
+                                new HospitalManagementSystemName(lastName),
+                                Role.Pracownik);
+
+                            if (_database.Items.Find(x => x.Pesel == employee.Pesel && x.Pesel != user.Pesel) != null)
+                            {
+                                throw new Exception("Użytkownik z takim peselem już istnieje.");
+                            }
+
+                            if (_database.Items.Find(
+                                    x => x.Username == employee.Username && x.Username != user.Username) != null)
+                            {
+                                throw new Exception("Taki użytkownik już istnieje.");
+                            }
+
+                            _database.Items.RemoveAt(index);
+                            _database.Items.Insert(index, employee);
+                            _database.SaveToXmlFile();
+                            break;
+                        case "1":
+                            Console.WriteLine("Specjalizacja: ");
+                            _menuActionService.DrawMenuViewByMenuType("Specialization");
+                            var specialization = Console.ReadLine();
+
+                            var userSpecialization = specialization switch
+                            {
+                                "1" => Specjalizacja.Kardiolog,
+                                "2" => Specjalizacja.Urolog,
+                                "3" => Specjalizacja.Laryngolog,
+                                "4" => Specjalizacja.Neurolog,
+                                _ => throw new Exception("Wybrano niepoprawną specjalizację")
+                            };
+
+                            index = _database.Items.FindIndex(x => x.Id == user.Id);
+
+                            employee = new Employee(new HospitalManagementSystemUsername(username),
+                                new HospitalManagementSystemPassword(password),
+                                new HospitalManagementSystemPesel(pesel),
+                                new HospitalManagementSystemId(userId),
+                                new HospitalManagementSystemName(name),
+                                new HospitalManagementSystemName(lastName),
+                                Role.Lekarz,
+                                new DoctorPrivileges(
+                                    new HospitalManagementSystemPWZ(_pwzNumberService.GetNewPWZ().ToString()),
+                                    userSpecialization));
+
+                            if (_database.Items.Find(x => x.Pesel == employee.Pesel && x.Pesel != user.Pesel) != null)
+                            {
+                                throw new Exception("Użytkownik z takim peselem już istnieje.");
+                            }
+
+                            if (_database.Items.Find(
+                                    x => x.Username == employee.Username && x.Username != user.Username) != null)
+                            {
+                                throw new Exception("Taki użytkownik już istnieje.");
+                            }
+
+                            _database.Items.RemoveAt(index);
+                            _database.Items.Insert(index, employee);
+                            _database.SaveToXmlFile();
+                            break;
+                        case "2":
+                            index = _database.Items.FindIndex(x => x.Id == user.Id);
+
+                            employee = new Employee(new HospitalManagementSystemUsername(username),
+                                new HospitalManagementSystemPassword(password),
+                                new HospitalManagementSystemPesel(pesel),
+                                new HospitalManagementSystemId(userId),
+                                new HospitalManagementSystemName(name),
+                                new HospitalManagementSystemName(lastName),
+                                Role.Administrator);
+
+                            if (_database.Items.Find(x => x.Pesel == employee.Pesel && x.Pesel != user.Pesel) != null)
+                            {
+                                throw new Exception("Użytkownik z takim peselem już istnieje.");
+                            }
+
+                            if (_database.Items.Find(
+                                    x => x.Username == employee.Username && x.Username != user.Username) != null)
+                            {
+                                throw new Exception("Taki użytkownik już istnieje.");
+                            }
+
+                            _database.Items.RemoveAt(index);
+                            _database.Items.Insert(index, employee);
+                            _database.SaveToXmlFile();
+                            break;
+                    }
+
+                    Console.WriteLine($"Pomyślnie zmieniono użytkownika o id {userId}");
+                }
+                else
+                {
+                    Console.WriteLine("Dany użytkownik nie istnieje.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Nie można zmienić samego siebie!");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Coś poszło nie tak ze zmianą użytkownika:");
+            Console.WriteLine(e.Message);
+        }
     }
 
     private void DeleteUser()
     {
         Console.Write("Podaj ID użytkownika, które chcesz usunąć: ");
-        var userId = CheckStringAndConvertToInt(Console.ReadLine());
+        var userId = Helper.CheckStringAndConvertToInt(Console.ReadLine());
 
-        _database.RemoveEmployee(userId);
+        if (userId != _employee.Id)
+        {
+            if (_database.RemoveEmployee(userId) == -1)
+            {
+                Console.WriteLine("Użytkownik nie istnieje.");
+            }
+            else
+            {
+                Console.WriteLine($"Pomyślnie usunięto użytkownika o ID {userId}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Nie można usunąć samego siebie!");
+        }
     }
 
     private void AddUser()
@@ -103,13 +266,25 @@ public class AdminOperations
             switch (role)
             {
                 case "0":
-                    _database.AddEmployee(new Employee(new HospitalManagementSystemUsername(username),
+                    var employee = new Employee(new HospitalManagementSystemUsername(username),
                         new HospitalManagementSystemPassword(password),
                         new HospitalManagementSystemPesel(pesel),
                         new HospitalManagementSystemId(_database.GetLastId() + 1),
                         new HospitalManagementSystemName(name),
                         new HospitalManagementSystemName(lastName),
-                        Role.Pracownik));
+                        Role.Pracownik);
+
+                    if (_database.Items.Find(x => x.Pesel == employee.Pesel) != null)
+                    {
+                        throw new Exception("Użytkownik z takim peselem już istnieje.");
+                    }
+                    
+                    if(_database.Items.Find(x => x.Username == employee.Username) != null)
+                    {
+                        throw new Exception("Taki użytkownik już istnieje.");
+                    }
+                    
+                    _database.AddEmployee(employee);
                     _database.SaveToXmlFile();
                     break;
                 case "1":
@@ -126,7 +301,7 @@ public class AdminOperations
                         _ => throw new Exception("Wybrano niepoprawną specjalizację")
                     };
 
-                    _database.AddEmployee(new Employee(new HospitalManagementSystemUsername(username),
+                    employee = new Employee(new HospitalManagementSystemUsername(username),
                         new HospitalManagementSystemPassword(password),
                         new HospitalManagementSystemPesel(pesel),
                         _database.GetLastId() + 1,
@@ -135,17 +310,41 @@ public class AdminOperations
                         Role.Lekarz,
                         new DoctorPrivileges(new HospitalManagementSystemPWZ(_pwzNumberService.GetNewPWZ().ToString()),
                             userSpecialization)
-                    ));
+                    );
+                    
+                    if (_database.Items.Find(x => x.Pesel == employee.Pesel) != null)
+                    {
+                        throw new Exception("Użytkownik z takim peselem już istnieje.");
+                    }
+                    
+                    if(_database.Items.Find(x => x.Username == employee.Username) != null)
+                    {
+                        throw new Exception("Taki użytkownik już istnieje.");
+                    }
+                    
+                    _database.AddEmployee(employee);
                     _database.SaveToXmlFile();
                     break;
                 case "2":
-                    _database.AddEmployee(new Employee(new HospitalManagementSystemUsername(username),
+                    employee = new Employee(new HospitalManagementSystemUsername(username),
                         new HospitalManagementSystemPassword(password),
                         new HospitalManagementSystemPesel(pesel),
                         _database.GetLastId() + 1,
                         new HospitalManagementSystemName(name),
                         new HospitalManagementSystemName(lastName),
-                        Role.Administrator));
+                        Role.Administrator);
+                    
+                    if (_database.Items.Find(x => x.Pesel == employee.Pesel) != null)
+                    {
+                        throw new Exception("Użytkownik z takim peselem już istnieje.");
+                    }
+                    
+                    if(_database.Items.Find(x => x.Username == employee.Username) != null)
+                    {
+                        throw new Exception("Taki użytkownik już istnieje.");
+                    }
+                    
+                    _database.AddEmployee(employee);
                     _database.SaveToXmlFile();
                     break;
             }
@@ -164,6 +363,7 @@ public class AdminOperations
         Console.Write("Numer\tId\tTyp\t\tImie\t\tPWZ\tSpecjalizacja\n");
 
         foreach (var (user, index) in _database.Items.Select((x, y) => (x, y + 1)))
+        {
             switch (user.Rola)
             {
                 case Role.Administrator:
@@ -178,22 +378,7 @@ public class AdminOperations
                     Console.WriteLine(
                         $"{index}.\t{user.Id}\t{user.Rola}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
                     break;
-            }
-    }
-
-    private int CheckStringAndConvertToInt(string text)
-    {
-        var result = 0;
-
-        try
-        {
-            if (!int.TryParse(text, out result)) throw new Exception($"Cannot parse {text} to int.");
+            } 
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
-
-        return result;
     }
 }

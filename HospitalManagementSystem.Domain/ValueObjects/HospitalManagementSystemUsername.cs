@@ -13,6 +13,11 @@ public record HospitalManagementSystemUsername
             throw new EmptyHospitalManagementSystemUsernameException();
         }
         
+        if(value.Length > 14)
+        {
+            throw new TooLongEmptyHospitalManagementSystemUsernameException();
+        }
+        
         Value = value;
     }
 

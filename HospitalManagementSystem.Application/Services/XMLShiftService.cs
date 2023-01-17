@@ -44,7 +44,7 @@ public class XMLShiftService
             var xmlShiftsDTO = (List<ShiftDTO>)serializer.Deserialize(sr);
 
             var mapper = new Mapper(_mapperConfigurationForDTO);
-            var xmlShifts = mapper.Map<List<Shift>>(xmlShiftsDTO);
+            var xmlShifts = mapper.Map<List<Shift>>(xmlShiftsDTO).OrderBy(x => x.Date);
 
             _database.Items = new List<Shift>(xmlShifts);
         }
@@ -60,6 +60,8 @@ public class XMLShiftService
         var mapper = new Mapper(_mapperConfiguration);
         var shiftsDTO = mapper.Map<List<ShiftDTO>>(shifts);
 
+        shiftsDTO = shiftsDTO.OrderBy(x => x.Date).ToList();
+        
         XmlRootAttribute root = new();
         root.ElementName = elementName;
         root.IsNullable = true;

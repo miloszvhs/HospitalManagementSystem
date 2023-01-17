@@ -60,7 +60,7 @@ public class DatabaseService : HospitalManagementSystemDb, IDatabaseService
             return user.Id;
         }
 
-        return 0;
+        return -1;
     }
 
     public Employee GetEmployee(int id)

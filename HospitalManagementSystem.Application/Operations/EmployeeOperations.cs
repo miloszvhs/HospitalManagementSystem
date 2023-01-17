@@ -49,5 +49,25 @@ public class EmployeeOperations
 
     private void ShowUsers()
     {
+        Console.Write("Numer\tId\tTyp\t\tImie\t\tPWZ\tSpecjalizacja\n");
+
+        foreach (var (user, index) in _database.Items.Select((x, y) => (x, y + 1)))
+        {
+            switch (user.Rola)
+            {
+                case Role.Administrator:
+                    Console.WriteLine(
+                        $"{index}.\t{user.Id}\t{string.Format("{0, -10}", user.Rola)}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
+                    break;
+                case Role.Lekarz:
+                    Console.WriteLine(
+                        $"{index}.\t{user.Id}\t{user.Rola}\t\t{string.Format("{0, -15}", user.Name.Value)}\t{user.DoctorPrivileges.Pwz.Value}\t{user.DoctorPrivileges.Specjalizacja}");
+                    break;
+                case Role.Pracownik:
+                    Console.WriteLine(
+                        $"{index}.\t{user.Id}\t{user.Rola}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
+                    break;
+            } 
+        }
     }
 }
