@@ -16,7 +16,7 @@ public class ShiftDatabaseService : HospitalManagementSystemShiftDb, IShiftDatab
         var mapperConfigurationForDTO = MapperConfigurationFromDTO();
         var mapperConfiguration = MapperConfiguration();
         
-        _xmlShiftService = new XMLShiftService(this, "employees.xml", "Employees", mapperConfigurationForDTO,
+        _xmlShiftService = new XMLShiftService(this, "shift.xml", "Shifts", mapperConfigurationForDTO,
             mapperConfiguration);
     }
     

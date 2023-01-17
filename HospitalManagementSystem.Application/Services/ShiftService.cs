@@ -117,6 +117,7 @@ public class ShiftService : IShiftService
             if(!shift.Users.Any())
             {
                 _database.Items.Remove(shift);
+                _database.SaveToXmlFile();
             }
             
             return employee.Id;
@@ -181,7 +182,9 @@ public class ShiftService : IShiftService
                     }
                     
                     var newShift = new Shift(date) { Users = { actuallEmployee } };
-                    _database.AddShift(newShift);; 
+                    _database.AddShift(newShift);;
+                    _database.SaveToXmlFile();
+                    Console.WriteLine("Dodano dyżur.");
                     return employee.Id;
                 }
             }
