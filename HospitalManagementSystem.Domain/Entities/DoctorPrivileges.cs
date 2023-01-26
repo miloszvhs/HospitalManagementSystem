@@ -4,23 +4,23 @@ namespace HospitalManagementSystem.Domain.Entities;
 
 public class DoctorPrivileges
 {
-    public HospitalManagementSystemPWZ Pwz { get; }
-    public Specjalizacja Specjalizacja { get; }
+    public Pwz Pwz { get; }
+    public DoctorSpecialization DoctorSpecialization { get; }
 
     public DoctorPrivileges()
     {
         
     }
 
-    public DoctorPrivileges(HospitalManagementSystemPWZ pwz, 
-        Specjalizacja specjalizacja)
+    public DoctorPrivileges(Pwz pwz, 
+        DoctorSpecialization doctorSpecialization)
     {
         Pwz = pwz;
-        Specjalizacja = specjalizacja;
+        DoctorSpecialization = doctorSpecialization;
     }
 }
 
-public enum Specjalizacja
+public enum DoctorSpecialization
 {
     Kardiolog = 1,
     Urolog,

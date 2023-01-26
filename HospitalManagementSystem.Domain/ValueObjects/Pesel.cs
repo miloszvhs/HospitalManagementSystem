@@ -2,28 +2,28 @@
 
 namespace HospitalManagementSystem.Domain.ValueObjects;
 
-public record HospitalManagementSystemPesel
+public record Pesel
 {
     public string Value { get; }
 
-    public HospitalManagementSystemPesel(string value)
+    public Pesel(string value)
     {
         if (string.IsNullOrEmpty(value) || string.IsNullOrWhiteSpace(value))
         {
-            throw new EmptyHospitalManagementSystemPeselException();
+            throw new EmptyCustomPeselException();
         }
 
         if (value.Any(char.IsLetter) || value.Length != 11)
         {
-            throw new InvalidHospitalManagementPeselException(value);
+            throw new InvalidPeselException(value);
         }
 
         Value = value;
     }
 
-    public static implicit operator string(HospitalManagementSystemPesel pesel)
+    public static implicit operator string(Pesel pesel)
         => pesel.Value;
     
-    public static implicit operator HospitalManagementSystemPesel(string pesel)
+    public static implicit operator Pesel(string pesel)
         => new(pesel);
 }

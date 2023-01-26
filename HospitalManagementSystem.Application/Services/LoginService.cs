@@ -23,11 +23,11 @@ public class LoginService : ILoginService
 
         var usernameInput = WriteAndRead("Login: ");
 
-        HospitalManagementSystemUsername userLogin = new(usernameInput);
+        Username userLogin = new(usernameInput);
 
         var passwordInput = WriteAndRead("Password: ");
 
-        HospitalManagementSystemPassword userPassword = new(_passwordHasherService.HashPassword(passwordInput));
+        Password userPassword = new(_passwordHasherService.HashPassword(passwordInput));
 
         var employee = _database.Items.FirstOrDefault(x => x.Username == userLogin);
 

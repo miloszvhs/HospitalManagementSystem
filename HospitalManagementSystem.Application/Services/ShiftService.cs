@@ -24,7 +24,7 @@ public class ShiftService : IShiftService
     {
         while (true)
         {
-            switch (actuallEmployee.Rola)
+            switch (actuallEmployee.Role)
             {
                 case Role.Administrator:
                     _menuActionService.DrawMenuViewByMenuType("ShiftsForAdministrator");
@@ -99,8 +99,8 @@ public class ShiftService : IShiftService
         foreach (var shift in _shiftDatabase.Items.Where(x => x.Date.Date >= DateTime.Now.Date))
         {
             Console.WriteLine("Id\tNazwa uzytkownika\tImie\tNazwisko\tSpecjalizacja");
-            foreach (var doctor in shift.Users.Where(x => x.Rola == Role.Lekarz))
-                Console.WriteLine($"{doctor.Id}.\t{doctor.Username.Value}\t{doctor.Name.Value}\t{doctor.LastName.Value}\t{doctor.DoctorPrivileges.Specjalizacja}");
+            foreach (var doctor in shift.Users.Where(x => x.Role == Role.Lekarz))
+                Console.WriteLine($"{doctor.Id}.\t{doctor.Username.Value}\t{doctor.Name.Value}\t{doctor.LastName.Value}\t{doctor.DoctorPrivileges.DoctorSpecialization}");
         }
     }
 
@@ -110,9 +110,9 @@ public class ShiftService : IShiftService
         {
             Console.WriteLine($"{shift.Date}");
             Console.WriteLine($"Id\t{string.Format("{0, -20}", "Nazwa uzytkownika")}\t{string.Format("{0, -20}", "Imie")}\t{string.Format("{0, -20}", "Nazwisko")}\tSpecjalizacja");
-            foreach (var doctor in shift.Users.Where(x => x.Rola == Role.Pracownik))
+            foreach (var doctor in shift.Users.Where(x => x.Role == Role.Pracownik))
                 Console.WriteLine(
-                    $"{doctor.Id}.\t{string.Format("{0, -20}", doctor.Username.Value)}\t{string.Format("{0, -20}", doctor.Name.Value)}\t{string.Format("{0, -20}", doctor.LastName.Value)}\t{doctor.DoctorPrivileges.Specjalizacja}");
+                    $"{doctor.Id}.\t{string.Format("{0, -20}", doctor.Username.Value)}\t{string.Format("{0, -20}", doctor.Name.Value)}\t{string.Format("{0, -20}", doctor.LastName.Value)}\t{doctor.DoctorPrivileges.DoctorSpecialization}");
         }
     }
 
@@ -126,7 +126,7 @@ public class ShiftService : IShiftService
                 Console.WriteLine($"Id\t{string.Format("{0, -20}", "Nazwa uzytkownika")}\t{string.Format("{0, -20}", "Imie")}\t{string.Format("{0, -20}", "Nazwisko")}\tSpecjalizacja");
                 foreach (var employee in shift.Users)
                     Console.WriteLine(
-                        $"{employee.Id}.\t{string.Format("{0, -20}", employee.Username.Value)}\t{string.Format("{0, -20}", employee.Name.Value)}\t{string.Format("{0, -20}", employee.LastName.Value)}\t{(employee.DoctorPrivileges is null ? "-" : employee.DoctorPrivileges.Specjalizacja)}");
+                        $"{employee.Id}.\t{string.Format("{0, -20}", employee.Username.Value)}\t{string.Format("{0, -20}", employee.Name.Value)}\t{string.Format("{0, -20}", employee.LastName.Value)}\t{(employee.DoctorPrivileges is null ? "-" : employee.DoctorPrivileges.DoctorSpecialization)}");
             }
         }
         else
@@ -196,11 +196,11 @@ public class ShiftService : IShiftService
                     throw new Exception("Nie można dodać dyżuru, gdyż dyżur w danym dniu już istnieje.");
                 }
 
-                if (employee.Rola == Role.Lekarz)
+                if (employee.Role == Role.Lekarz)
                 {
                     var doctorWithSameSpecialization = shift.Users.Where(x => x.DoctorPrivileges is not null)
                         .ToList()
-                        .Find(x => x.DoctorPrivileges.Specjalizacja == employee.DoctorPrivileges.Specjalizacja);
+                        .Find(x => x.DoctorPrivileges.DoctorSpecialization == employee.DoctorPrivileges.DoctorSpecialization);
                     if (doctorWithSameSpecialization is not null)
                         throw new Exception(
                             "Nie można dodać dyżuru, gdyż tego dnia dyżur ma już inny lekarz z tą samą specjalizacją.");

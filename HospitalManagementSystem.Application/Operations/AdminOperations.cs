@@ -1,4 +1,5 @@
 ﻿using HospitalManagementSystem.Domain.Entities;
+using HospitalManagementSystem.Domain.Exceptions;
 using HospitalManagementSystem.Domain.Interfaces;
 using HospitalManagementSystem.Domain.ValueObjects;
 using HospitalManagementSystem.Shared.Abstractions.Helpers;
@@ -73,7 +74,7 @@ public class AdminOperations
         {
             if(_database.GetEmployee(userId) == null)
             {
-                throw new Exception("Użytkownik o takim ID nie istnieje.");
+                throw new UserWithIdDoesntExistException(userId);
             }
             
             if (userId != _employee.Id)
@@ -106,23 +107,23 @@ public class AdminOperations
                         case "0":
                             var index = _database.Items.FindIndex(x => x.Id == user.Id);
 
-                            var employee = new Employee(new HospitalManagementSystemUsername(username),
-                                new HospitalManagementSystemPassword(password),
-                                new HospitalManagementSystemPesel(pesel),
-                                new HospitalManagementSystemId(userId),
-                                new HospitalManagementSystemName(name),
-                                new HospitalManagementSystemName(lastName),
+                            var employee = new Employee(new Username(username),
+                                new Password(password),
+                                new Pesel(pesel),
+                                new Id(userId),
+                                new Name(name),
+                                new Name(lastName),
                                 Role.Pracownik);
 
                             if (_database.Items.Find(x => x.Pesel == employee.Pesel && x.Pesel != user.Pesel) != null)
                             {
-                                throw new Exception("Użytkownik z takim peselem już istnieje.");
+                                throw new UserWithPeselAlreadyExistsException(pesel);
                             }
 
                             if (_database.Items.Find(
                                     x => x.Username == employee.Username && x.Username != user.Username) != null)
                             {
-                                throw new Exception("Taki użytkownik już istnieje.");
+                                throw new UserAlreadyExistsException(username);
                             }
 
                             _database.Items.RemoveAt(index);
@@ -136,35 +137,35 @@ public class AdminOperations
 
                             var userSpecialization = specialization switch
                             {
-                                "1" => Specjalizacja.Kardiolog,
-                                "2" => Specjalizacja.Urolog,
-                                "3" => Specjalizacja.Laryngolog,
-                                "4" => Specjalizacja.Neurolog,
-                                _ => throw new Exception("Wybrano niepoprawną specjalizację")
+                                "1" => DoctorSpecialization.Kardiolog,
+                                "2" => DoctorSpecialization.Urolog,
+                                "3" => DoctorSpecialization.Laryngolog,
+                                "4" => DoctorSpecialization.Neurolog,
+                                _ => throw new InvalidSpecializationException()
                             };
 
                             index = _database.Items.FindIndex(x => x.Id == user.Id);
 
-                            employee = new Employee(new HospitalManagementSystemUsername(username),
-                                new HospitalManagementSystemPassword(password),
-                                new HospitalManagementSystemPesel(pesel),
-                                new HospitalManagementSystemId(userId),
-                                new HospitalManagementSystemName(name),
-                                new HospitalManagementSystemName(lastName),
+                            employee = new Employee(new Username(username),
+                                new Password(password),
+                                new Pesel(pesel),
+                                new Id(userId),
+                                new Name(name),
+                                new Name(lastName),
                                 Role.Lekarz,
                                 new DoctorPrivileges(
-                                    new HospitalManagementSystemPWZ(_pwzNumberService.GetNewPWZ().ToString()),
+                                    new Pwz(_pwzNumberService.GetNewPWZ().ToString()),
                                     userSpecialization));
 
                             if (_database.Items.Find(x => x.Pesel == employee.Pesel && x.Pesel != user.Pesel) != null)
                             {
-                                throw new Exception("Użytkownik z takim peselem już istnieje.");
+                                throw new UserWithPeselAlreadyExistsException(pesel);
                             }
 
                             if (_database.Items.Find(
                                     x => x.Username == employee.Username && x.Username != user.Username) != null)
                             {
-                                throw new Exception("Taki użytkownik już istnieje.");
+                                throw new UserAlreadyExistsException(username);
                             }
 
                             _database.Items.RemoveAt(index);
@@ -174,23 +175,23 @@ public class AdminOperations
                         case "2":
                             index = _database.Items.FindIndex(x => x.Id == user.Id);
 
-                            employee = new Employee(new HospitalManagementSystemUsername(username),
-                                new HospitalManagementSystemPassword(password),
-                                new HospitalManagementSystemPesel(pesel),
-                                new HospitalManagementSystemId(userId),
-                                new HospitalManagementSystemName(name),
-                                new HospitalManagementSystemName(lastName),
+                            employee = new Employee(new Username(username),
+                                new Password(password),
+                                new Pesel(pesel),
+                                new Id(userId),
+                                new Name(name),
+                                new Name(lastName),
                                 Role.Administrator);
 
                             if (_database.Items.Find(x => x.Pesel == employee.Pesel && x.Pesel != user.Pesel) != null)
                             {
-                                throw new Exception("Użytkownik z takim peselem już istnieje.");
+                                throw new UserWithPeselAlreadyExistsException(pesel);
                             }
 
                             if (_database.Items.Find(
                                     x => x.Username == employee.Username && x.Username != user.Username) != null)
                             {
-                                throw new Exception("Taki użytkownik już istnieje.");
+                                throw new UserAlreadyExistsException(username);
                             }
 
                             _database.Items.RemoveAt(index);
@@ -266,22 +267,22 @@ public class AdminOperations
             switch (role)
             {
                 case "0":
-                    var employee = new Employee(new HospitalManagementSystemUsername(username),
-                        new HospitalManagementSystemPassword(password),
-                        new HospitalManagementSystemPesel(pesel),
-                        new HospitalManagementSystemId(_database.GetLastId() + 1),
-                        new HospitalManagementSystemName(name),
-                        new HospitalManagementSystemName(lastName),
+                    var employee = new Employee(new Username(username),
+                        new Password(password),
+                        new Pesel(pesel),
+                        new Id(_database.GetLastId() + 1),
+                        new Name(name),
+                        new Name(lastName),
                         Role.Pracownik);
 
                     if (_database.Items.Find(x => x.Pesel == employee.Pesel) != null)
                     {
-                        throw new Exception("Użytkownik z takim peselem już istnieje.");
+                        throw new UserWithPeselAlreadyExistsException(pesel);
                     }
                     
                     if(_database.Items.Find(x => x.Username == employee.Username) != null)
                     {
-                        throw new Exception("Taki użytkownik już istnieje.");
+                        throw new UserAlreadyExistsException(username);
                     }
                     
                     _database.AddEmployee(employee);
@@ -294,54 +295,54 @@ public class AdminOperations
 
                     var userSpecialization = specialization switch
                     {
-                        "1" => Specjalizacja.Kardiolog,
-                        "2" => Specjalizacja.Urolog,
-                        "3" => Specjalizacja.Laryngolog,
-                        "4" => Specjalizacja.Neurolog,
-                        _ => throw new Exception("Wybrano niepoprawną specjalizację")
+                        "1" => DoctorSpecialization.Kardiolog,
+                        "2" => DoctorSpecialization.Urolog,
+                        "3" => DoctorSpecialization.Laryngolog,
+                        "4" => DoctorSpecialization.Neurolog,
+                        _ => throw new InvalidSpecializationException()
                     };
 
-                    employee = new Employee(new HospitalManagementSystemUsername(username),
-                        new HospitalManagementSystemPassword(password),
-                        new HospitalManagementSystemPesel(pesel),
+                    employee = new Employee(new Username(username),
+                        new Password(password),
+                        new Pesel(pesel),
                         _database.GetLastId() + 1,
-                        new HospitalManagementSystemName(name),
-                        new HospitalManagementSystemName(lastName),
+                        new Name(name),
+                        new Name(lastName),
                         Role.Lekarz,
-                        new DoctorPrivileges(new HospitalManagementSystemPWZ(_pwzNumberService.GetNewPWZ().ToString()),
+                        new DoctorPrivileges(new Pwz(_pwzNumberService.GetNewPWZ().ToString()),
                             userSpecialization)
                     );
                     
                     if (_database.Items.Find(x => x.Pesel == employee.Pesel) != null)
                     {
-                        throw new Exception("Użytkownik z takim peselem już istnieje.");
+                        throw new UserWithPeselAlreadyExistsException(pesel);
                     }
                     
                     if(_database.Items.Find(x => x.Username == employee.Username) != null)
                     {
-                        throw new Exception("Taki użytkownik już istnieje.");
+                        throw new UserAlreadyExistsException(username);
                     }
                     
                     _database.AddEmployee(employee);
                     _database.SaveToXmlFile();
                     break;
                 case "2":
-                    employee = new Employee(new HospitalManagementSystemUsername(username),
-                        new HospitalManagementSystemPassword(password),
-                        new HospitalManagementSystemPesel(pesel),
+                    employee = new Employee(new Username(username),
+                        new Password(password),
+                        new Pesel(pesel),
                         _database.GetLastId() + 1,
-                        new HospitalManagementSystemName(name),
-                        new HospitalManagementSystemName(lastName),
+                        new Name(name),
+                        new Name(lastName),
                         Role.Administrator);
                     
                     if (_database.Items.Find(x => x.Pesel == employee.Pesel) != null)
                     {
-                        throw new Exception("Użytkownik z takim peselem już istnieje.");
+                        throw new UserWithPeselAlreadyExistsException(pesel);
                     }
                     
                     if(_database.Items.Find(x => x.Username == employee.Username) != null)
                     {
-                        throw new Exception("Taki użytkownik już istnieje.");
+                        throw new UserAlreadyExistsException(username);
                     }
                     
                     _database.AddEmployee(employee);
@@ -364,19 +365,19 @@ public class AdminOperations
 
         foreach (var (user, index) in _database.Items.Select((x, y) => (x, y + 1)))
         {
-            switch (user.Rola)
+            switch (user.Role)
             {
                 case Role.Administrator:
                     Console.WriteLine(
-                        $"{index}.\t{user.Id}\t{string.Format("{0, -10}", user.Rola)}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
+                        $"{index}.\t{user.Id}\t{string.Format("{0, -10}", user.Role)}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
                     break;
                 case Role.Lekarz:
                     Console.WriteLine(
-                        $"{index}.\t{user.Id}\t{user.Rola}\t\t{string.Format("{0, -15}", user.Name.Value)}\t{user.DoctorPrivileges.Pwz.Value}\t{user.DoctorPrivileges.Specjalizacja}");
+                        $"{index}.\t{user.Id}\t{user.Role}\t\t{string.Format("{0, -15}", user.Name.Value)}\t{user.DoctorPrivileges.Pwz.Value}\t{user.DoctorPrivileges.DoctorSpecialization}");
                     break;
                 case Role.Pracownik:
                     Console.WriteLine(
-                        $"{index}.\t{user.Id}\t{user.Rola}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
+                        $"{index}.\t{user.Id}\t{user.Role}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
                     break;
             } 
         }

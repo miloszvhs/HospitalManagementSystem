@@ -38,12 +38,12 @@ public class RegistrationService : IRegistrationService
         try
         {
             employee = new Employee(
-                new HospitalManagementSystemUsername(username),
-                new HospitalManagementSystemPassword(password),
-                new HospitalManagementSystemPesel(pesel),
-                new HospitalManagementSystemId(_database.GetLastId() + 1),
-                new HospitalManagementSystemName(name),
-                new HospitalManagementSystemName(lastName),
+                new Username(username),
+                new Password(password),
+                new Pesel(pesel),
+                new Id(_database.GetLastId() + 1),
+                new Name(name),
+                new Name(lastName),
                 Role.Pracownik);
             
             if (_database.Items.Find(x => x.Pesel == employee.Pesel) != null)

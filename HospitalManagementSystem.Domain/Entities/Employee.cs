@@ -5,47 +5,47 @@ namespace HospitalManagementSystem.Domain.Entities;
 
 public class Employee : BaseEntity
 {
-    public HospitalManagementSystemName Name { get; }
-    public HospitalManagementSystemName LastName { get; }
-    public HospitalManagementSystemUsername Username { get; }
-    public HospitalManagementSystemPassword Password { get; }
-    public HospitalManagementSystemPesel Pesel { get; }
-    public Role Rola { get; init; }
+    public Name Name { get; }
+    public Name LastName { get; }
+    public Username Username { get; }
+    public Password Password { get; }
+    public Pesel Pesel { get; }
+    public Role Role { get; }
     public DoctorPrivileges? DoctorPrivileges { get; set; }
 
     public Employee()
     {
     }
     
-    public Employee(HospitalManagementSystemUsername username, HospitalManagementSystemPassword password)
+    public Employee(Username username, Password password)
     {
         Username = username;
         Password = password;
     }
     
-    public Employee(HospitalManagementSystemUsername username,
-        HospitalManagementSystemPassword password,
-        HospitalManagementSystemPesel pesel,
-        HospitalManagementSystemId id,
-        HospitalManagementSystemName name,
-        HospitalManagementSystemName lastName,
-        Role rola) : this(username, password)
+    public Employee(Username username,
+        Password password,
+        Pesel pesel,
+        Id id,
+        Name name,
+        Name lastName,
+        Role role) : this(username, password)
     {
         Pesel = pesel;
         Name = name;
         Id = id;
         LastName = lastName;
-        Rola = rola;
+        Role = role;
     }
 
-    public Employee(HospitalManagementSystemUsername username,
-        HospitalManagementSystemPassword password,
-        HospitalManagementSystemPesel pesel,
-        HospitalManagementSystemId id,
-        HospitalManagementSystemName name,
-        HospitalManagementSystemName lastName,
-        Role rola,
-        DoctorPrivileges doctorPrivileges) : this(username, password, pesel, id, name, lastName, rola)
+    public Employee(Username username,
+        Password password,
+        Pesel pesel,
+        Id id,
+        Name name,
+        Name lastName,
+        Role role,
+        DoctorPrivileges doctorPrivileges) : this(username, password, pesel, id, name, lastName, role)
     {
         DoctorPrivileges = doctorPrivileges;
     }

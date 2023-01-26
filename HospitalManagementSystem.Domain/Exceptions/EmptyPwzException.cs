@@ -2,9 +2,9 @@
 
 namespace HospitalManagementSystem.Domain.Exceptions;
 
-public class InvalidPasswordException : CustomException
+public class EmptyPwzException : CustomException
 {
-    public InvalidPasswordException() : base($"Invalid password")
+    public EmptyPwzException() : base($"PWZ number cannot be empty.")
     {
     }
 }

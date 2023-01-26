@@ -2,4 +2,4 @@
 
 namespace HospitalManagementSystem.Domain.ValueObjects;
 
-public record HospitalManagementSystemPassword(byte[] Value);
+public record Password(byte[] Value);

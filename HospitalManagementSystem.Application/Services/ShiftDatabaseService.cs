@@ -79,11 +79,11 @@ public class ShiftDatabaseService : HospitalManagementSystemShiftDb, IShiftDatab
                 .ForMember(x => x.Users, s => s.MapFrom(d => d.Users));
             cfg.CreateMap<EmployeeDTO, Employee>()
                 .ConstructUsing(src => new Employee(src.Username,
-                    new HospitalManagementSystemPassword(src.Password), src.Pesel, src.Id, src.Name, src.LastName,
+                    new Password(src.Password), src.Pesel, src.Id, src.Name, src.LastName,
                     src.Role));
             cfg.CreateMap<DoctorPrivilegesDTO, DoctorPrivileges>()
-                .ForMember(x => x.Pwz, s => s.MapFrom(d => new HospitalManagementSystemPWZ(d.Pwz)))
-                .ForMember(x => x.Specjalizacja, s => s.MapFrom(d => d.Specjalizacja));
+                .ForMember(x => x.Pwz, s => s.MapFrom(d => new Pwz(d.Pwz)))
+                .ForMember(x => x.DoctorSpecialization, s => s.MapFrom(d => d.Specialization));
         });
     }
 
@@ -100,11 +100,11 @@ public class ShiftDatabaseService : HospitalManagementSystemShiftDb, IShiftDatab
                 .ForMember(x => x.Pesel, s => s.MapFrom(d => d.Pesel.Value))
                 .ForMember(x => x.Username, s => s.MapFrom(d => d.Username.Value))
                 .ForMember(x => x.LastName, s => s.MapFrom(d => d.LastName.Value))
-                .ForMember(x => x.Role, s => s.MapFrom(d => d.Rola))
+                .ForMember(x => x.Role, s => s.MapFrom(d => d.Role))
                 .ForMember(x => x.DoctorPrivileges, s => s.MapFrom(d => d.DoctorPrivileges));
             cfg.CreateMap<DoctorPrivileges, DoctorPrivilegesDTO>()
                 .ForMember(x => x.Pwz, s => s.MapFrom(d => d.Pwz.Value))
-                .ForMember(x => x.Specjalizacja, s => s.MapFrom(d => d.Specjalizacja));
+                .ForMember(x => x.Specialization, s => s.MapFrom(d => d.DoctorSpecialization));
         });
     }
 }

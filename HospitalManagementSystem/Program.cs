@@ -36,7 +36,7 @@ internal class Program
 
                     if ((employee = loginService.Login()) != null)
                     {
-                        switch (employee.Rola)
+                        switch (employee.Role)
                         {
                             case Role.Administrator:
                                 var adminOperations = new AdminOperations(menuService,

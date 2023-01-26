@@ -2,9 +2,9 @@
 
 namespace HospitalManagementSystem.Domain.Exceptions;
 
-public class InvalidPasswordException : CustomException
+public class EmptyCustomIdException : CustomException
 {
-    public InvalidPasswordException() : base($"Invalid password")
+    public EmptyCustomIdException() : base($"Id cannot be empty.")
     {
     }
 }

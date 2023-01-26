@@ -20,7 +20,7 @@ public class PasswordHasherService : IPasswordHasherService
         }
     }
 
-    public bool ValidatePassword(Employee employee, HospitalManagementSystemPassword password)
+    public bool ValidatePassword(Employee employee, Password password)
     {
         if (!password.Value.SequenceEqual(employee.Password.Value)) throw new InvalidPasswordException();
 

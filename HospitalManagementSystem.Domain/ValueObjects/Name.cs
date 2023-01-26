@@ -2,23 +2,23 @@
 
 namespace HospitalManagementSystem.Domain.ValueObjects;
 
-public record HospitalManagementSystemName
+public record Name
 {
     public string Value { get; }
 
-    public HospitalManagementSystemName(string value)
+    public Name(string value)
     {
         if (string.IsNullOrWhiteSpace(value) || !value.Any(char.IsLetter))
         {
-            throw new EmptyHospitalManagementSystemNameException();
+            throw new EmptyCustomNameException();
         }
         
         Value = value;
     }
 
-    public static implicit operator string(HospitalManagementSystemName name)
+    public static implicit operator string(Name name)
         => name.Value;
 
-    public static implicit operator HospitalManagementSystemName(string name)
+    public static implicit operator Name(string name)
         => new(name);
 }
