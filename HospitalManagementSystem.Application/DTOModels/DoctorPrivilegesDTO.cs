@@ -3,5 +3,5 @@
 public class DoctorPrivilegesDTO
 {
     public string Pwz { get; set; }
-    public int Specialization { get; set; }
+    public int DoctorSpecialization { get; set; }
 }

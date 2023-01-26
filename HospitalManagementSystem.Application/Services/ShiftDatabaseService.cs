@@ -83,7 +83,7 @@ public class ShiftDatabaseService : HospitalManagementSystemShiftDb, IShiftDatab
                     src.Role));
             cfg.CreateMap<DoctorPrivilegesDTO, DoctorPrivileges>()
                 .ForMember(x => x.Pwz, s => s.MapFrom(d => new Pwz(d.Pwz)))
-                .ForMember(x => x.DoctorSpecialization, s => s.MapFrom(d => d.Specialization));
+                .ForMember(x => x.DoctorSpecialization, s => s.MapFrom(d => d.DoctorSpecialization));
         });
     }
 
@@ -104,7 +104,7 @@ public class ShiftDatabaseService : HospitalManagementSystemShiftDb, IShiftDatab
                 .ForMember(x => x.DoctorPrivileges, s => s.MapFrom(d => d.DoctorPrivileges));
             cfg.CreateMap<DoctorPrivileges, DoctorPrivilegesDTO>()
                 .ForMember(x => x.Pwz, s => s.MapFrom(d => d.Pwz.Value))
-                .ForMember(x => x.Specialization, s => s.MapFrom(d => d.DoctorSpecialization));
+                .ForMember(x => x.DoctorSpecialization, s => s.MapFrom(d => d.DoctorSpecialization));
         });
     }
 }
