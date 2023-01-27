@@ -9,7 +9,5 @@ public interface IShiftService
     int RemoveShift(DateTime date, Employee employee);
     int EditShift();
     void SetEmployee(Employee employee);
-    void ShowDoctorShifts();
-    void ShowEmployeeShifts();
     void Run();
 }

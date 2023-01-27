@@ -53,7 +53,7 @@ public class Employee : BaseEntity
 
 public enum Role
 {
-    Pracownik,
+    Pracownik = 1,
     Lekarz,
     Administrator
 }

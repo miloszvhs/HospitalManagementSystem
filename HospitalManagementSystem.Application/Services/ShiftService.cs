@@ -94,48 +94,17 @@ public class ShiftService : IShiftService
         }
     }
 
-    public void ShowDoctorShifts()
-    {
-        foreach (var shift in _shiftDatabase.Items.Where(x => x.Date.Date >= DateTime.Now.Date))
-        {
-            Console.WriteLine("Id\tNazwa uzytkownika\tImie\tNazwisko\tSpecjalizacja");
-            foreach (var doctor in shift.Users.Where(x => x.Role == Role.Lekarz))
-                Console.WriteLine($"{doctor.Id}.\t{doctor.Username.Value}\t{doctor.Name.Value}\t{doctor.LastName.Value}\t{doctor.DoctorPrivileges.DoctorSpecialization}");
-        }
-    }
-
-    public void ShowEmployeeShifts()
-    {
-        foreach (var shift in _shiftDatabase.Items.Where(x => x.Date.Date >= DateTime.Now.Date))
-        {
-            Console.WriteLine($"{shift.Date}");
-            Console.WriteLine($"Id\t{string.Format("{0, -20}", "Nazwa uzytkownika")}\t{string.Format("{0, -20}", "Imie")}\t{string.Format("{0, -20}", "Nazwisko")}\tSpecjalizacja");
-            foreach (var doctor in shift.Users.Where(x => x.Role == Role.Pracownik))
-                Console.WriteLine(
-                    $"{doctor.Id}.\t{string.Format("{0, -20}", doctor.Username.Value)}\t{string.Format("{0, -20}", doctor.Name.Value)}\t{string.Format("{0, -20}", doctor.LastName.Value)}\t{doctor.DoctorPrivileges.DoctorSpecialization}");
-        }
-    }
-
     public void ShowAllShifts()
     {
         if (_shiftDatabase.Items.Any())
         {
-            foreach (var shift in _shiftDatabase.Items.Where(x => x.Date.Date >= DateTime.Now.Date))
-            {
-                Console.WriteLine($"{shift.Date}");
-                Console.WriteLine($"Id\t{string.Format("{0, -20}", "Nazwa uzytkownika")}\t{string.Format("{0, -20}", "Imie")}\t{string.Format("{0, -20}", "Nazwisko")}\tSpecjalizacja");
-                foreach (var employee in shift.Users)
-                    Console.WriteLine(
-                        $"{employee.Id}.\t{string.Format("{0, -20}", employee.Username.Value)}\t{string.Format("{0, -20}", employee.Name.Value)}\t{string.Format("{0, -20}", employee.LastName.Value)}\t{(employee.DoctorPrivileges is null ? "-" : employee.DoctorPrivileges.DoctorSpecialization)}");
-            }
+            _menuActionService.DrawShifts(_shiftDatabase.Items);
         }
         else
         {
             Console.WriteLine("Nie ma żadnych dyżurów.");
         }
     }
-    
-    
 
     public int RemoveShift(DateTime date, Employee employee)
     {

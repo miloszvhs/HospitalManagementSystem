@@ -1,15 +1,15 @@
-﻿namespace HospitalManagementSystem.Domain.Entities;
+﻿using Spectre.Console;
+
+namespace HospitalManagementSystem.Domain.Entities;
 
 public class MenuAction
 {
-    public int Id { get; }
-    public string Name { get; }
+    public Table Table { get; }
     public string MenuType { get; }
 
-    public MenuAction(int id, string name, string menuType)
+    public MenuAction(Table table, string menuType)
     {
-        Id = id;
-        Name = name;
+        Table = table;
         MenuType = menuType;
     }
 }

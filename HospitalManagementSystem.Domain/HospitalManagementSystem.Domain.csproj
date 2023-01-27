@@ -10,4 +10,8 @@
       <ProjectReference Include="..\HospitalManagementSystem.Shared.Abstractions\HospitalManagementSystem.Shared.Abstractions.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Spectre.Console" Version="0.46.1-preview.0.4" />
+    </ItemGroup>
+
 </Project>

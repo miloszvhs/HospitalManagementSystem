@@ -3,6 +3,7 @@ using HospitalManagementSystem.Domain.Exceptions;
 using HospitalManagementSystem.Domain.Interfaces;
 using HospitalManagementSystem.Domain.ValueObjects;
 using HospitalManagementSystem.Shared.Abstractions.Helpers;
+using Spectre.Console;
 
 namespace HospitalManagementSystem.Application.Operations;
 
@@ -104,7 +105,7 @@ public class AdminOperations
                 {
                     switch (role)
                     {
-                        case "0":
+                        case "1":
                             var index = _database.Items.FindIndex(x => x.Id == user.Id);
 
                             var employee = new Employee(new Username(username),
@@ -130,7 +131,7 @@ public class AdminOperations
                             _database.Items.Insert(index, employee);
                             _database.SaveToXmlFile();
                             break;
-                        case "1":
+                        case "2":
                             Console.WriteLine("Specjalizacja: ");
                             _menuActionService.DrawMenuViewByMenuType("Specialization");
                             var specialization = Console.ReadLine();
@@ -172,7 +173,7 @@ public class AdminOperations
                             _database.Items.Insert(index, employee);
                             _database.SaveToXmlFile();
                             break;
-                        case "2":
+                        case "3":
                             index = _database.Items.FindIndex(x => x.Id == user.Id);
 
                             employee = new Employee(new Username(username),
@@ -266,7 +267,7 @@ public class AdminOperations
         {
             switch (role)
             {
-                case "0":
+                case "1":
                     var employee = new Employee(new Username(username),
                         new Password(password),
                         new Pesel(pesel),
@@ -288,7 +289,7 @@ public class AdminOperations
                     _database.AddEmployee(employee);
                     _database.SaveToXmlFile();
                     break;
-                case "1":
+                case "2":
                     Console.WriteLine("Specjalizacja: ");
                     _menuActionService.DrawMenuViewByMenuType("Specialization");
                     var specialization = Console.ReadLine();
@@ -326,7 +327,7 @@ public class AdminOperations
                     _database.AddEmployee(employee);
                     _database.SaveToXmlFile();
                     break;
-                case "2":
+                case "3":
                     employee = new Employee(new Username(username),
                         new Password(password),
                         new Pesel(pesel),
@@ -361,25 +362,6 @@ public class AdminOperations
 
     private void ShowUsers()
     {
-        Console.Write("Numer\tId\tTyp\t\tImie\t\tPWZ\tSpecjalizacja\n");
-
-        foreach (var (user, index) in _database.Items.Select((x, y) => (x, y + 1)))
-        {
-            switch (user.Role)
-            {
-                case Role.Administrator:
-                    Console.WriteLine(
-                        $"{index}.\t{user.Id}\t{string.Format("{0, -10}", user.Role)}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
-                    break;
-                case Role.Lekarz:
-                    Console.WriteLine(
-                        $"{index}.\t{user.Id}\t{user.Role}\t\t{string.Format("{0, -15}", user.Name.Value)}\t{user.DoctorPrivileges.Pwz.Value}\t{user.DoctorPrivileges.DoctorSpecialization}");
-                    break;
-                case Role.Pracownik:
-                    Console.WriteLine(
-                        $"{index}.\t{user.Id}\t{user.Role}\t{string.Format("{0, -10}", user.Name.Value)}\t-\t-");
-                    break;
-            } 
-        }
+        _menuActionService.DrawUsers(_database.Items);
     }
 }
