@@ -56,7 +56,7 @@ public class MenuActionService : IMenuActionService
             .AddColumn("[deepskyblue3]Nazwisko[/]")
             .AddColumn("[dodgerblue3]Specjalizacja[/]");
         
-        foreach (var shift in shifts.Where(x => x.Date.Date >= DateTime.Now.Date))
+        foreach (var shift in shifts.Where(x => x.Date.Date >= DateTime.Now.Date).OrderBy(x => x.Date.Date))
         {
             table.AddRow($"{shift.Date.ToShortDateString()}", "[invert]-----[/]", "[invert]-----[/]", "[invert]-----[/]", "[invert]-----[/]");
 
@@ -143,5 +143,13 @@ public class MenuActionService : IMenuActionService
                 .AddRow("2", "Lekarz")
                 .AddRow("3", "Admin")
             , "Roles"));
+        
+        _menuActions.Add(new MenuAction(new Table()
+                .AddColumn("[dodgerblue3]Numer[/]")
+                .AddColumn("[deepskyblue3]Akcja[/]")
+                .AddRow("1", "Zmień")
+                .AddRow("2", "Usuń")
+                .AddRow("3", "Powrót")
+            , "ShiftEdit"));
     }
 }

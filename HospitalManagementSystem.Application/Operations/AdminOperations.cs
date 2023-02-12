@@ -124,7 +124,7 @@ public class AdminOperations
                             if (_database.Items.Find(
                                     x => x.Username == employee.Username && x.Username != user.Username) != null)
                             {
-                                throw new UserAlreadyExistsException(username);
+                                throw new UserAlreadyExistsException();
                             }
 
                             _database.Items.RemoveAt(index);
@@ -166,7 +166,7 @@ public class AdminOperations
                             if (_database.Items.Find(
                                     x => x.Username == employee.Username && x.Username != user.Username) != null)
                             {
-                                throw new UserAlreadyExistsException(username);
+                                throw new UserAlreadyExistsException();
                             }
 
                             _database.Items.RemoveAt(index);
@@ -192,7 +192,7 @@ public class AdminOperations
                             if (_database.Items.Find(
                                     x => x.Username == employee.Username && x.Username != user.Username) != null)
                             {
-                                throw new UserAlreadyExistsException(username);
+                                throw new UserAlreadyExistsException();
                             }
 
                             _database.Items.RemoveAt(index);
@@ -283,7 +283,7 @@ public class AdminOperations
                     
                     if(_database.Items.Find(x => x.Username == employee.Username) != null)
                     {
-                        throw new UserAlreadyExistsException(username);
+                        throw new UserAlreadyExistsException();
                     }
                     
                     _database.AddEmployee(employee);
@@ -321,7 +321,7 @@ public class AdminOperations
                     
                     if(_database.Items.Find(x => x.Username == employee.Username) != null)
                     {
-                        throw new UserAlreadyExistsException(username);
+                        throw new UserAlreadyExistsException();
                     }
                     
                     _database.AddEmployee(employee);
@@ -343,7 +343,7 @@ public class AdminOperations
                     
                     if(_database.Items.Find(x => x.Username == employee.Username) != null)
                     {
-                        throw new UserAlreadyExistsException(username);
+                        throw new UserAlreadyExistsException();
                     }
                     
                     _database.AddEmployee(employee);
